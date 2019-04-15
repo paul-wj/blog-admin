@@ -2,7 +2,8 @@ const Router = require('koa-router');
 let router = new Router();
 
 const user = require('./user');
-let routerList = [user];
+const article = require('./article');
+let routerList = [user, article];
 
 
 routerList.forEach( currentRouter => {
