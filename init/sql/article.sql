@@ -4,6 +4,8 @@ CREATE TABLE  IF NOT EXISTS `article_info` (
   `update_time` varchar(20) DEFAULT NULL,
   `create_time` varchar(20) DEFAULT NULL,
   `tag_ids` varchar(255) DEFAULT NULL,
+  `categories` varchar(255) DEFAULT NULL,
+  `comments` varchar(255) DEFAULT NULL,
   `content` longtext DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
