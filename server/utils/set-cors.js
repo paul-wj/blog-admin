@@ -1,5 +1,5 @@
 const cors = require('koa2-cors');
-const whiteList = ['http://localhost:8080'];
+const whiteList = ['http://localhost:3000'];
 const crosOptions = {
 	origin: ctx => {
 		if (ctx.request.header.origin !== ctx.origin && whiteList.includes(ctx.request.header.origin)) {
