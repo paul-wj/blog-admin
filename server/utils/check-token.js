@@ -21,7 +21,7 @@ const verifyToken = token => {
 	return result;
 };
 const checkToken = (ctx, next) => {
-	if (whiteList.some(router => ctx.url === router.url && ctx.method === router.method.toUpperCase())) {
+	if (whiteList.some(router => ctx.url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
 		return next();
 	} else{
 		let hasToken = verifyToken(ctx.header.authorization);
