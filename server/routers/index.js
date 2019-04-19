@@ -3,7 +3,8 @@ let router = new Router();
 
 const user = require('./user');
 const article = require('./article');
-let routerList = [user, article];
+const tagCategory = require('./tag-category');
+let routerList = [user, article, tagCategory];
 
 
 routerList.forEach( currentRouter => {

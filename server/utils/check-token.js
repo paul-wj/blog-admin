@@ -2,8 +2,11 @@ const jwt = require('jsonwebtoken');
 const PRIVATE_KEY = 'abc';
 const whiteList = [
 	{url: '/user/create', method: 'post'},
-	{url: '/login', method: 'get'},
-	{url: '/article', method: 'get'}];
+	{url: '/login', method: 'post'},
+	{url: '/article', method: 'get'},
+	{url: '/tag', method: 'get'},
+	{url: '/category', method: 'get'}
+];
 const createToken = (contentOptions) => {
 	if (!contentOptions) {
 		return
@@ -21,7 +24,8 @@ const verifyToken = token => {
 	return result;
 };
 const checkToken = (ctx, next) => {
-	if (whiteList.some(router => ctx.url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
+	let url = ctx.url.split('?')[0];
+	if (whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
 		return next();
 	} else{
 		let hasToken = verifyToken(ctx.header.authorization);

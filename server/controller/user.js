@@ -7,7 +7,7 @@ const user = {
 			result: null,
 			message: null
 		};
-		let {username, password} = ctx.request.query;
+		let {username, password} = ctx.request.body;
 		if (!username || !password) {
 			response.code = 400;
 			response.message = '请输入用户名或密码';

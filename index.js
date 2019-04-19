@@ -18,7 +18,6 @@ app.use(bodyParser());
 app.use(cors);
 //检查token
 app.use(checkToken);
-
 app.use(router.routes()).use(router.allowedMethods());
 app.use(helmet());
 app.listen(config.port);
