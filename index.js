@@ -5,6 +5,7 @@ const bodyParser = require('koa-bodyparser');
 const koaLogger = require('koa-logger');
 const cors = require('./server/utils/set-cors');
 const {checkToken} = require('./server/utils/check-token');
+const errorHandle  = require('./server/utils/errorHandle');
 
 const config = require('./config');
 const router = require('./server/routers/index');
@@ -17,7 +18,7 @@ app.use(bodyParser());
 //配置跨域cors
 app.use(cors);
 //检查token
-app.use(checkToken);
+app.use(checkToken).use(errorHandle);
 app.use(router.routes()).use(router.allowedMethods());
 app.use(helmet());
 app.listen(config.port);
