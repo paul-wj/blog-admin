@@ -1,4 +1,5 @@
 const articleSql = require('../sql/article');
+const {html_decode} = require('../utils');
 const createResponse = require('../utils/create-response');
 const article = {
 	async getArticleAllList(ctx) {
@@ -7,6 +8,7 @@ const article = {
 		if (res && res.length) {
 			response.code = 0;
 			response.message = '成功';
+			res = res.map(item => Object.assign({}, item, {content: html_decode(item.content)}));
 			response.results = res;
 		} else {
 			response.code = 404;
@@ -25,6 +27,7 @@ const article = {
 		if (res && res.length) {
 			response.code = 0;
 			response.message = '成功';
+			res[0].content = html_decode(res[0].content);
 			response.result = res[0];
 		} else {
 			response.code = 404;
