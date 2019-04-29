@@ -17,7 +17,7 @@ const user = {
 		if (res && res.length) {
 			response.message = '成功';
 			response.result = Object.assign({}, res[0], {
-				token: createToken({username, password})
+				token: createToken(Object.assign({}, res[0]))
 			})
 		} else {
 			response.code = 400;

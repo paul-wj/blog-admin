@@ -61,7 +61,6 @@ const article = {
 			return ctx.body = response
 		}
 		let res = await tagCategory.deleteTag(id);
-		console.log(JSON.stringify(res));
 		if (res && res.insertId - 0 > 0) {
 			response.message = '成功';
 		}

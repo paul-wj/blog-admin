@@ -23,6 +23,15 @@ const verifyToken = token => {
 	});
 	return result;
 };
+
+const getTokenResult = token => {
+	let result;
+	jwt.verify(token, PRIVATE_KEY, (err, decode) => {
+		result =  err ? null : decode;
+	});
+	return result;
+};
+
 const checkToken = (ctx, next) => {
 	let url = ctx.url.split('?')[0];
 	if (whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
@@ -37,4 +46,4 @@ const checkToken = (ctx, next) => {
 	}
 };
 
-module.exports = {createToken, verifyToken, checkToken};
+module.exports = {createToken, verifyToken, checkToken, getTokenResult};
