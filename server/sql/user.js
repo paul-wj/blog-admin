@@ -10,6 +10,9 @@ const user = {
 	},
 	async getUserList(params) {
 		return query(`select * from ${USER_TABLE_NAME} where name like '%${params.name}%' limit ${params.limit} offset ${params.offset}`)
+	},
+	async getUserInfo(id) {
+		return query(`select * from ${USER_TABLE_NAME} where id='${id}'`)
 	}
 };
 
