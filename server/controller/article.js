@@ -14,6 +14,13 @@ const article = {
 				item, {content: html_decode(item.content),
 					tagIds: item.tagIds.split(',').map(item => item - 0),
 					categories: item.categories.split(',').map(item => item - 0)}));
+			let promiseList = [];
+			res.forEach(item => {
+				promiseList.push(articleSql.getArticleCommentList(item.id).then(res => {
+					item.comments = res.length;
+				}))
+			});
+			await Promise.all(promiseList);
 			response.results = res;
 		} else {
 			response.code = 404;
@@ -37,6 +44,10 @@ const article = {
 				content: html_decode(result.content),
 				tagIds: result.tagIds.split(',').map(item => item - 0),
 				categories: result.categories.split(',').map(item => item - 0)});
+
+			let commentsResult = await articleSql.getArticleCommentList(result.id);
+			result.comments = commentsResult.length;
+
 			response.result = result;
 		} else {
 			response.code = 404;

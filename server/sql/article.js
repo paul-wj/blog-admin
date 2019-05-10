@@ -4,7 +4,7 @@ const ARTICLE_TABLE_NAME = 'article_info';
 const ARTICLE_COMMENT_TABLE_NAME = 'article_comment';
 const article = {
 	async getArticleAllList() {
-		return query(`select * from ${ARTICLE_TABLE_NAME}`)
+		return query(`SELECT * FROM ${ARTICLE_TABLE_NAME} a LEFT JOIN ${ARTICLE_COMMENT_TABLE_NAME} b ON a.id = b.articleId LEFT JOIN user_info c ON b.userId = c.id;`)
 	},
 	async getArticleById(id) {
 		return query(`select * from ${ARTICLE_TABLE_NAME} where id=${id}`)
@@ -21,7 +21,7 @@ const article = {
 		return query(`update ${ARTICLE_TABLE_NAME} set title='${data.title}', categories='${data.categories}', tagIds='${data.tagIds}', content='${content}', updateTime='${currentDate}' where id = ${id}`)
 	},
 	async deleteArticle(id) {
-		return query(`delete from ${ARTICLE_TABLE_NAME} where id = ${id}`)
+		return query(`delete a,b from ${ARTICLE_TABLE_NAME} a inner join ${ARTICLE_COMMENT_TABLE_NAME} b where a.id = b.articleId and a.id = ${id}`)
 	},
 	async createArticleComment(id, data) {
 		let sqlStatement = `insert into ${ARTICLE_COMMENT_TABLE_NAME} (articleId, userId, content, createTime) values (?, ?, ?, ?)`;
