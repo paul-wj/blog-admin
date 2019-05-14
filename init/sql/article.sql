@@ -5,7 +5,6 @@ CREATE TABLE  IF NOT EXISTS `article_info` (
   `createTime` varchar(20) DEFAULT NULL,
   `tagIds` varchar(255) DEFAULT NULL,
   `categories` varchar(255) DEFAULT NULL,
-  `comments` varchar(255) DEFAULT NULL,
   `content` longtext DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
