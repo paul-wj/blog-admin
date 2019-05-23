@@ -33,7 +33,7 @@ const article = {
 		return query(sqlStatement, [id, data.userId, data.content, currentDate])
 	},
 	async getArticleCommentList(id) {
-		return query(`select a.*, b.name userName from ${ARTICLE_COMMENT_TABLE_NAME} a left join user_info b ON a.userId = b.id where a.articleId=${id}`)
+		return query(`select a.*, b.username userName from ${ARTICLE_COMMENT_TABLE_NAME} a left join user_info b ON a.userId = b.id where a.articleId=${id}`)
 	}
 };
 module.exports = article;
