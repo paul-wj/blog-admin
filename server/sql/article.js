@@ -4,12 +4,12 @@ const ARTICLE_TABLE_NAME = 'article_info';
 const ARTICLE_COMMENT_TABLE_NAME = 'article_comment';
 const article = {
 	async getArticleAllList() {
-		return query(`SELECT a.*, b.id commentId, b.content commentContent, b.createTime commentCreateTime, c.name userName 
+		return query(`SELECT a.*, b.id commentId, b.content commentContent, b.createTime commentCreateTime, c.username userName 
 		FROM ${ARTICLE_TABLE_NAME} a LEFT JOIN ${ARTICLE_COMMENT_TABLE_NAME} b 
 		ON a.id = b.articleId LEFT JOIN user_info c ON b.userId = c.id;`)
 	},
 	async getArticleById(id) {
-		return query(`SELECT a.*, b.id commentId, b.content commentContent, b.createTime commentCreateTime, c.name userName 
+		return query(`SELECT a.*, b.id commentId, b.content commentContent, b.createTime commentCreateTime, c.username userName 
 		FROM ${ARTICLE_TABLE_NAME} a LEFT JOIN ${ARTICLE_COMMENT_TABLE_NAME} b 
 		ON a.id = b.articleId LEFT JOIN user_info c ON b.userId = c.id where a.id=${id};`)
 	},
