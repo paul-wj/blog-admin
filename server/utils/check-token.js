@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const PRIVATE_KEY = 'abc';
 const whiteList = [
-	{url: '/user/create', method: 'post'},
+	{url: '/user', method: 'post'},
 	{url: '/login', method: 'post'},
 	{url: '/article', method: 'get'},
 	{url: '/tag', method: 'get'},
