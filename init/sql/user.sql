@@ -2,11 +2,9 @@ CREATE TABLE  IF NOT EXISTS  `user_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
   `nick` varchar(255) DEFAULT NULL,
-  `detailInfo` longtext DEFAULT NULL,
   `createTime` varchar(20) DEFAULT NULL,
-  `modifiedTime` varchar(20) DEFAULT NULL,
-  `level` int(11) DEFAULT NULL,
+  `updateTime` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
