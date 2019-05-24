@@ -13,25 +13,17 @@ const article = {
 		if (res && res.length) {
 			response.code = 0;
 			response.message = '成功';
-			const deleteKeyList = ['commentId', 'commentContent', 'commentCreateTime'];
-			let result = Array.from(new Set(res.map(item => item.id))).map(articleId => {
-				let articleInfo = {};
-				let comments = [];
-				res.filter(article => article.id === articleId).forEach(currentArticleInfo => {
-					articleInfo = Object.assign(articleInfo, currentArticleInfo);
-					if (currentArticleInfo.commentId) {
-						comments.push({commentId: currentArticleInfo.commentId, content: currentArticleInfo.commentContent, createTime: currentArticleInfo.commentCreateTime})
-					}
-				});
-				articleInfo = Object.assign(articleInfo, {comments});
-				deleteKeyList.forEach(item => delete articleInfo[item]);
-				return articleInfo;
-			});
-			result = result.map(item => Object.assign({},
-				item, {content: html_decode(item.content),
-					tagIds: item.tagIds.split(',').map(item => item - 0),
-					categories: item.categories.split(',').map(item => item - 0)}));
-			response.results = result;
+			async function processArray(arr) {
+				for (let item of arr) {
+					let commentList = await articleSql.getArticleCommentList(item.id);
+					item.comments = commentList.length;
+					item.content = html_decode(item.content);
+					item.tagIds = item.tagIds.split(',').map(item => item - 0);
+					item.categories = item.categories.split(',').map(item => item - 0);
+				}
+			}
+			await processArray(res);
+			response.results = res;
 		} else {
 			response.code = 404;
 			response.message = '信息不存在';
@@ -47,24 +39,15 @@ const article = {
 		}
 		let res = await articleSql.getArticleById(id);
 		if (res && res.length) {
+			let result = res[0];
 			response.code = 0;
 			response.message = '成功';
-			const deleteKeyList = ['commentId', 'commentContent', 'commentCreateTime'];
-			let result = {};
-			let comments = [];
-			res.forEach(currentArticleInfo => {
-				if (!result.id) {
-					result = Object.assign(result, currentArticleInfo);
-				}
-				comments.push({commentId: currentArticleInfo.commentId, content: currentArticleInfo.commentContent, createTime: currentArticleInfo.commentCreateTime})
-			});
-			result = Object.assign(result, {comments});
-			deleteKeyList.forEach(item => delete result[item]);
-			result = Object.assign({}, result, {
+			const commentList = await articleSql.getArticleCommentList(result.id);
+			result = Object.assign(result, {comments: commentList.length});
+			response.result = Object.assign({}, result, {
 				content: html_decode(result.content),
 				tagIds: result.tagIds.split(',').map(item => item - 0),
 				categories: result.categories.split(',').map(item => item - 0)});
-			response.result = result;
 		} else {
 			response.code = 404;
 			response.message = '信息不存在';
