@@ -13,6 +13,15 @@ const config = {
 		prefix: 'test',     //存诸前缀
 		ttl: '12',        //过期时间
 		db: ''
+	},
+	databaseNameList: {
+		ARTICLE_TABLE_NAME: 'article_info',
+		ARTICLE_COMMENT_TABLE_NAME: 'article_comment',
+		ARTICLE_REPLY_TABLE_NAME: 'article_reply',
+		USER_TABLE_NAME: 'user_info',
+		LOGGER_TABLE_NAME: 'log_info',
+		TAG_TABLE_NAME: 'tag_info',
+		CATEGORY_TABLE_NAME: 'category_info'
 	}
 };
 module.exports = config;
