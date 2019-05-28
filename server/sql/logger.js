@@ -1,5 +1,6 @@
 const {query} = require('../utils/async-db');
-const LOGGER_TABLE_NAME = 'log_info';
+const databaseNameList = require('../../config/index').databaseNameList;
+const {LOGGER_TABLE_NAME} = databaseNameList;
 const logger = {
 	async createLogger(data) {
 		let sqlStatement = `insert into ${LOGGER_TABLE_NAME} (userId, userName, host, status, url, method, createTime) values (?, ?, ?, ?, ?, ?, ?)`;

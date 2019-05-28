@@ -119,6 +119,24 @@ const article = {
 		let res = await articleSql.getArticleCommentList(id);
 		if (res && res.length) {
 			response.code = 0;
+			async function processArray(arr) {
+				for (let item of arr) {
+					//回复类型（10：点赞，20：踩,  30: 文字回复）
+					const replyAllList = await articleSql.getArticleCommentReplyListByCommentId(item.id);
+					let likes = 0, dislikes = 0, replyList = [], isReply = false;
+					replyAllList.forEach(reply => {
+						if (reply.type === 10) {
+							likes++
+						} else if (reply.type === 20) {
+							dislikes++
+						} else {
+							replyList.push(Object.assign({}, reply, {isReply: false}));
+						}
+					});
+					item.reply = {likes, dislikes, replyList};
+				}
+			}
+			await processArray(res);
 			response.message = '成功';
 			response.results = res;
 		} else {
@@ -146,6 +164,37 @@ const article = {
 			return ctx.body = response
 		}
 		let res = await articleSql.createArticleComment(id, {userId: userInfo.id, content: requestBody.content});
+		if (res && res.insertId - 0 > 0) {
+			response.message = '成功';
+		}
+		ctx.body = response;
+	},
+	async createArticleCommentReply(ctx) {
+		const userInfo = getTokenResult(ctx.header.authorization);
+		const commentId = ctx.params.id;
+		const userId = userInfo.id;
+		const {type, content, toUserId, replyWay, replyId} = ctx.request.body;
+		//回复方式为10时replyId为commentId，回复方式为20时replyId为replyId
+		const requestBody = {commentId, type, content, toUserId, userId, replyWay, replyId: replyWay === 10 ? commentId : replyId};
+		const validator = Joi.validate(requestBody, ArticleSchema.createArticleCommentReply);
+		if (validator.error) {
+			return ctx.body = {code: 400, message: validator.error.message}
+		}
+		let response = createResponse();
+		let res;
+		const replyList = await articleSql.getArticleCommentReplyListByReplyWayAndReplyId(replyWay, replyWay === 10 ? commentId : replyId);
+		if ([10, 20].includes(type)) {
+			if (toUserId === userId) {
+				return ctx.body = {code: 400, message: `当前未开放自己为自己${type === 10 ? '点赞' : '踩'}功能!`}
+			}
+			let replyIndex = replyList.findIndex(item => item.userId === userId && item.type === type);
+			res = replyIndex > -1 ?  await articleSql.deleteArticleCommentReply(replyList[replyIndex].id) : await articleSql.createArticleCommentReply(requestBody.commentId, requestBody);
+		} else {
+			if (toUserId === userId) {
+				return ctx.body = {code: 400, message: `当前未开放自己为自己评论功能!`}
+			}
+			res = await articleSql.createArticleCommentReply(requestBody.commentId, requestBody);
+		}
 		if (res && res.insertId - 0 > 0) {
 			response.message = '成功';
 		}

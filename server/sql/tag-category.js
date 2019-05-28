@@ -1,6 +1,6 @@
 const {query} = require('../utils/async-db');
-const TAG_TABLE_NAME = 'tag_info';
-const CATEGORY_TABLE_NAME = 'category_info';
+const databaseNameList = require('../../config/index').databaseNameList;
+const {TAG_TABLE_NAME, CATEGORY_TABLE_NAME} = databaseNameList;
 const tagCategory = {
 	async getTagAllList() {
 		return query(`select * from ${TAG_TABLE_NAME}`)

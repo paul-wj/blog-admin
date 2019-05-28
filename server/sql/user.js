@@ -1,5 +1,6 @@
 const {query} = require('../utils/async-db');
-const USER_TABLE_NAME = 'user_info';
+const databaseNameList = require('../../config/index').databaseNameList;
+const {USER_TABLE_NAME} = databaseNameList;
 const user = {
 	async registerUser(users) {
 		let createTime = new Date().toLocaleString();

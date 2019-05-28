@@ -22,8 +22,19 @@ const getArticleList = Joi.object().keys({
 	category: Joi.string().allow('')
 });
 
+const createArticleCommentReply = Joi.object().keys({
+	commentId: Joi.string().required().error(new Error('commentId不能为空')),
+	replyWay: Joi.number().required().error(new Error('回复方式不能为空')),
+	replyId: Joi.when('replyWay', {is: 20, then: Joi.number().required().error(new Error('回复id不能为空'))}),
+	type: Joi.number().required().error(new Error('回复类型不能为空')),
+	userId: Joi.number().required(),
+	toUserId: Joi.number().required().error(new Error('回复用户id不能为空')),
+	content: Joi.when('type', {is: 30, then: Joi.string().required().error(new Error('回复内容不能为空'))})
+});
+
 module.exports = {
 	createArticle,
 	editArticle,
-	getArticleList
+	getArticleList,
+	createArticleCommentReply
 };

@@ -10,5 +10,6 @@ article
 	.delete('/article/:id', async ctx => articleModel.deleteArticle(ctx))
 	.get('/article/comment/:id', async ctx => articleModel.getArticleCommentList(ctx))
 	.post('/article/comment/:id', async ctx => articleModel.createArticleComment(ctx))
+	.post('/article/reply/:id', async ctx => articleModel.createArticleCommentReply(ctx))
 ;
 module.exports = article;
