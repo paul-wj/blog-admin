@@ -32,9 +32,19 @@ const createArticleCommentReply = Joi.object().keys({
 	content: Joi.when('type', {is: 30, then: Joi.string().required().error(new Error('回复内容不能为空'))})
 });
 
+const deleteArticleCommentReply = Joi.object().keys({
+	replyId: Joi.string().required().error(new Error('replyId不能为空'))
+});
+
+const deleteArticleComment = Joi.object().keys({
+	commentId: Joi.string().required().error(new Error('commentId不能为空'))
+});
+
 module.exports = {
 	createArticle,
 	editArticle,
 	getArticleList,
-	createArticleCommentReply
+	createArticleCommentReply,
+	deleteArticleCommentReply,
+	deleteArticleComment
 };

@@ -124,14 +124,28 @@ const article = {
 					//回复类型（10：点赞，20：踩,  30: 文字回复）
 					const replyAllList = await articleSql.getArticleCommentReplyListByCommentId(item.id);
 					let likes = 0, dislikes = 0, replyList = [], isReply = false;
+					let replyToReplyList = [];
 					replyAllList.forEach(reply => {
-						if (reply.type === 10) {
-							likes++
-						} else if (reply.type === 20) {
-							dislikes++
+						//当评论方式为评论回复时
+						if (reply.replyWay === 10) {
+							if (reply.type !== 30) {
+								reply.type === 10 ? likes++ : dislikes++
+							}
 						} else {
-							replyList.push(Object.assign({}, reply, {isReply: false}));
+							replyToReplyList.push(reply);
 						}
+						if (reply.type === 30) {
+							replyList.push(Object.assign({}, reply, {isReply, likes: 0, dislikes: 0}));
+						}
+					});
+					replyList = replyList.map(reply => {
+						let likes = 0, dislikes = 0;
+						replyToReplyList.forEach(item => {
+							if (item.type !== 30 && item.replyId === reply.id) {
+								item.type === 10 ? likes++ : dislikes++
+							}
+						});
+						return Object.assign({}, reply, {likes, dislikes})
 					});
 					item.reply = {likes, dislikes, replyList};
 				}
@@ -169,6 +183,20 @@ const article = {
 		}
 		ctx.body = response;
 	},
+	async deleteArticleComment(ctx) {
+		let commentId = ctx.params.id;
+		const requestBody = {commentId};
+		const validator = Joi.validate(requestBody, ArticleSchema.deleteArticleComment);
+		if (validator.error) {
+			return ctx.body = {code: 400, message: validator.error.message}
+		}
+		let response = createResponse();
+		let res = await articleSql.deleteArticleComment(commentId);
+		if (res && res.insertId - 0 > 0) {
+			response.message = '成功';
+		}
+		ctx.body = response;
+	},
 	async createArticleCommentReply(ctx) {
 		const userInfo = getTokenResult(ctx.header.authorization);
 		const commentId = ctx.params.id;
@@ -182,19 +210,30 @@ const article = {
 		}
 		let response = createResponse();
 		let res;
+		if (toUserId === userId) {
+			return ctx.body = {code: 400, message: `当前未开放自己为自己${type === 10 ? '点赞' : type === 30 ?  '评论' : '踩'}功能!`}
+		}
 		const replyList = await articleSql.getArticleCommentReplyListByReplyWayAndReplyId(replyWay, replyWay === 10 ? commentId : replyId);
 		if ([10, 20].includes(type)) {
-			if (toUserId === userId) {
-				return ctx.body = {code: 400, message: `当前未开放自己为自己${type === 10 ? '点赞' : '踩'}功能!`}
-			}
 			let replyIndex = replyList.findIndex(item => item.userId === userId && item.type === type);
-			res = replyIndex > -1 ?  await articleSql.deleteArticleCommentReply(replyList[replyIndex].id) : await articleSql.createArticleCommentReply(requestBody.commentId, requestBody);
+			res = replyIndex > -1 ?  await articleSql.deleteArticleCommentReplyByReplyId(replyList[replyIndex].id, false) : await articleSql.createArticleCommentReply(requestBody.commentId, requestBody);
 		} else {
-			if (toUserId === userId) {
-				return ctx.body = {code: 400, message: `当前未开放自己为自己评论功能!`}
-			}
 			res = await articleSql.createArticleCommentReply(requestBody.commentId, requestBody);
 		}
+		if (res && res.insertId - 0 > 0) {
+			response.message = '成功';
+		}
+		ctx.body = response;
+	},
+	async deleteArticleCommentReply(ctx) {
+		let replyId = ctx.params.id;
+		const requestBody = {replyId};
+		const validator = Joi.validate(requestBody, ArticleSchema.deleteArticleCommentReply);
+		if (validator.error) {
+			return ctx.body = {code: 400, message: validator.error.message}
+		}
+		let response = createResponse();
+		let res = await articleSql.deleteArticleCommentReplyByReplyId(replyId);
 		if (res && res.insertId - 0 > 0) {
 			response.message = '成功';
 		}

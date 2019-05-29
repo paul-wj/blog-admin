@@ -37,13 +37,16 @@ const article = {
 	async getArticleCommentList(id) {
 		return query(`select a.*, b.username userName from ${ARTICLE_COMMENT_TABLE_NAME} a left join ${USER_TABLE_NAME} b ON a.userId = b.id where a.articleId=${id}`)
 	},
+	async deleteArticleComment(commentId) {
+		return query(`delete ${ARTICLE_COMMENT_TABLE_NAME}, ${ARTICLE_REPLY_TABLE_NAME} from ${ARTICLE_COMMENT_TABLE_NAME} left join ${ARTICLE_REPLY_TABLE_NAME} on ${ARTICLE_COMMENT_TABLE_NAME}.id = ${ARTICLE_REPLY_TABLE_NAME}.commentId where ${ARTICLE_COMMENT_TABLE_NAME}.id = ${commentId}`)
+	},
 	async createArticleCommentReply(commentId, {type, content, userId, toUserId, replyWay, replyId}) {
 		const currentDate = new Date().toLocaleString();
 		let sqlStatement = `insert into ${ARTICLE_REPLY_TABLE_NAME} (commentId, replyWay, replyId, userId, toUserId, content, type, createTime) values (?, ?, ?, ?, ?, ?, ?, ?)`;
 		return query(sqlStatement, [commentId, replyWay, replyId, userId, toUserId, content, type, currentDate]);
 	},
-	async deleteArticleCommentReply(id) {
-		return query(`delete from ${ARTICLE_REPLY_TABLE_NAME} where id = ${id}`)
+	async deleteArticleCommentReplyByReplyId(replyId, isReply = true) {
+		return query(`delete from ${ARTICLE_REPLY_TABLE_NAME} where id = ${replyId} ${isReply ? `or (replyWay=20 and replyId=${replyId})` : ''}`)
 	},
 	async getArticleCommentReplyListByCommentId(commentId) {
 		return query(`select reply.*, user.username userName, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.commentId=${commentId}`)

@@ -10,6 +10,8 @@ article
 	.delete('/article/:id', async ctx => articleModel.deleteArticle(ctx))
 	.get('/article/comment/:id', async ctx => articleModel.getArticleCommentList(ctx))
 	.post('/article/comment/:id', async ctx => articleModel.createArticleComment(ctx))
+	.delete('/article/comment/:id', async ctx => articleModel.deleteArticleComment(ctx))
 	.post('/article/reply/:id', async ctx => articleModel.createArticleCommentReply(ctx))
+	.delete('/article/reply/:id', async ctx => articleModel.deleteArticleCommentReply(ctx))
 ;
 module.exports = article;
