@@ -4,6 +4,7 @@ const whiteList = [
 	{url: '/user', method: 'post'},
 	{url: '/login', method: 'post'},
 	{url: '/article', method: 'get'},
+	{url: '/article/comment', method: 'get'},
 	{url: '/tag', method: 'get'},
 	{url: '/category', method: 'get'}
 ];
@@ -12,7 +13,7 @@ const createToken = (contentOptions) => {
 		return
 	}
 	return jwt.sign(contentOptions, PRIVATE_KEY, {
-		expiresIn: 60*60*24*7
+		expiresIn: 60*60*2
 	})
 };
 
@@ -33,17 +34,19 @@ const getTokenResult = token => {
 };
 
 const checkToken = (ctx, next) => {
-	let url = ctx.url.split('?')[0];
-	if (whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
+	// let url = ctx.url.split('?')[0];
+	//whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method)
+	//get请求和options请求直接通过
+	if (['OPTIONS', 'GET'].includes(ctx.method)) {
 		return next();
-	} else{
-		let hasToken = verifyToken(ctx.header.authorization);
-		return hasToken === true ? next() : ctx.body = {
-			code: 900,
-			message: hasToken.err.message,
-			result: null
-		};
 	}
+	const authorization = ctx.header.authorization;
+	let hasToken = verifyToken(authorization);
+	return hasToken === true ? next() : ctx.body = {
+		code: 900,
+		message: authorization ? '登录状态已失效，请重新登录' : '请登录后进行当前操作',
+		result: null
+	};
 };
 
 module.exports = {createToken, verifyToken, checkToken, getTokenResult};
