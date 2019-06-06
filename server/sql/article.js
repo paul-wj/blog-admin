@@ -10,7 +10,8 @@ const article = {
 		// ON a.id = b.articleId LEFT JOIN ${USER_TABLE_NAME} c ON b.userId = c.id;`)
 	},
 	async getArticlePageList(params) {
-		return query(`select * from ${ARTICLE_TABLE_NAME} limit ${params.limit} offset ${params.offset};select count(*) as total from ${ARTICLE_TABLE_NAME};`)
+		const {limit, offset, title} = params;
+		return query(`select * from ${ARTICLE_TABLE_NAME} where title like '%${title || ''}%' limit ${limit} offset ${offset};${title ? 'SELECT FOUND_ROWS() as total;' : `select count(*) as total from ${ARTICLE_TABLE_NAME};`}`)
 	},
 	async getArticleById(id) {
 		return query(`select * from ${ARTICLE_TABLE_NAME} where id=${id}`);
