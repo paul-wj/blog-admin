@@ -2,11 +2,7 @@ const jwt = require('jsonwebtoken');
 const PRIVATE_KEY = 'abc';
 const whiteList = [
 	{url: '/user', method: 'post'},
-	{url: '/login', method: 'post'},
-	{url: '/article', method: 'get'},
-	{url: '/article/comment', method: 'get'},
-	{url: '/tag', method: 'get'},
-	{url: '/category', method: 'get'}
+	{url: '/login', method: 'post'}
 ];
 const createToken = (contentOptions) => {
 	if (!contentOptions) {
@@ -34,10 +30,10 @@ const getTokenResult = token => {
 };
 
 const checkToken = (ctx, next) => {
-	// let url = ctx.url.split('?')[0];
-	//whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method)
+	let url = ctx.url.split('?')[0];
+	//whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))
 	//get请求和options请求直接通过
-	if (['OPTIONS', 'GET'].includes(ctx.method)) {
+	if (['OPTIONS', 'GET'].includes(ctx.method) || whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
 		return next();
 	}
 	const authorization = ctx.header.authorization;
