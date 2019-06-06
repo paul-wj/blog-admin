@@ -9,6 +9,9 @@ const article = {
 		// FROM ${ARTICLE_TABLE_NAME} a LEFT JOIN ${ARTICLE_COMMENT_TABLE_NAME} b
 		// ON a.id = b.articleId LEFT JOIN ${USER_TABLE_NAME} c ON b.userId = c.id;`)
 	},
+	async getArticlePageList(params) {
+		return query(`select * from ${ARTICLE_TABLE_NAME} limit ${params.limit} offset ${params.offset};select count(*) as total from ${ARTICLE_TABLE_NAME};`)
+	},
 	async getArticleById(id) {
 		return query(`select * from ${ARTICLE_TABLE_NAME} where id=${id}`);
 		// return query(`SELECT a.*, b.id commentId, b.content commentContent, b.createTime commentCreateTime, b.userId, c.username userName

@@ -30,6 +30,37 @@ const article = {
 		}
 		ctx.body = response;
 	},
+	async getArticlePageList(ctx) {
+		const {title, limit, offset} = ctx.query;
+		const requestBody = {title, limit, offset};
+		const validator = Joi.validate(requestBody, ArticleSchema.getArticlePageList);
+		if (validator.error) {
+			return ctx.body = {code: 400, message: validator.error.message}
+		}
+		let response = createResponse();
+		let res = await articleSql.getArticlePageList(requestBody);
+		const articlePageList = res[0];
+		const total = res[1][0].total;
+		if (res && res.length) {
+			response.code = 0;
+			response.message = '成功';
+			async function processArray(arr) {
+				for (let item of arr) {
+					let commentList = await articleSql.getArticleCommentList(item.id);
+					item.comments = commentList.length;
+					item.content = html_decode(item.content);
+					item.tagIds = item.tagIds.split(',').map(item => item - 0);
+					item.categories = item.categories.split(',').map(item => item - 0);
+				}
+			}
+			await processArray(articlePageList);
+			response.result = {items: articlePageList, total, limit: limit - 0, offset: offset - 0}
+		} else {
+			response.code = 404;
+			response.message = '信息不存在';
+		}
+		ctx.body = response;
+	},
 	async getArticleById(ctx) {
 		let id = ctx.params.id;
 		let response = createResponse();

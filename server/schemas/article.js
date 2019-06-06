@@ -1,4 +1,11 @@
 const Joi = require('joi');
+
+const getArticlePageList = Joi.object().keys({
+	title: Joi.string(),
+	limit: Joi.number().required().error(new Error('页码不能为空')),
+	offset: Joi.number().required().error(new Error('起始行不能为空')),
+});
+
 const createArticle = Joi.object().keys({
 	title: Joi.string().required().error(new Error('标题不能为空')),
 	content: Joi.string().allow(''),
@@ -46,5 +53,6 @@ module.exports = {
 	getArticleList,
 	createArticleCommentReply,
 	deleteArticleCommentReply,
-	deleteArticleComment
+	deleteArticleComment,
+	getArticlePageList
 };
