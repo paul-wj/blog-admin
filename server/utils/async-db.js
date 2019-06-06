@@ -4,7 +4,8 @@ const pool = mysql.createPool({
 	host: config.database.HOST,
 	user: config.database.USERNAME,
 	password: config.database.PASSWORD,
-	database: config.database.DATABASE
+	database: config.database.DATABASE,
+	multipleStatements: true
 });
 let query = (sql, values) => {
 	return new Promise((resolve, reject) => {
@@ -21,7 +22,7 @@ let query = (sql, values) => {
 					connection.release();
 				})
 			}
-		})
+		});
 	});
 };
 
