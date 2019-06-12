@@ -11,7 +11,7 @@ const article = {
 	},
 	async getArticlePageList(params) {
 		const {limit, offset, title} = params;
-		return query(`select * from ${ARTICLE_TABLE_NAME} where title like '%${title || ''}%' limit ${limit} offset ${offset};${title ? 'SELECT FOUND_ROWS() as total;' : `select count(*) as total from ${ARTICLE_TABLE_NAME};`}`)
+		return query(`select sql_calc_found_rows  * from ${ARTICLE_TABLE_NAME} where title like '%${title || ''}%' limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`)
 	},
 	async getArticleById(id) {
 		return query(`select * from ${ARTICLE_TABLE_NAME} where id=${id}`);
