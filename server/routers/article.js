@@ -5,6 +5,7 @@ let article = new Router();
 article
 	.get('/article', async ctx => articleModel.getArticleAllList(ctx))
 	.get('/article/page', async ctx => articleModel.getArticlePageList(ctx))
+	.get('/article/page/simple', async ctx => articleModel.getArticlePageList(ctx, true))
 	.get('/article/:id', async ctx => articleModel.getArticleById(ctx))
 	.post('/article', async ctx => articleModel.createArticle(ctx))
 	.patch('/article/:id', async ctx => articleModel.editArticle(ctx))

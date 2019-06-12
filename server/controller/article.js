@@ -30,7 +30,13 @@ const article = {
 		}
 		ctx.body = response;
 	},
-	async getArticlePageList(ctx) {
+	/**
+	 * 获取文章分页列表
+	 * @param ctx
+	 * @param isSimple
+	 * @returns {Promise<{code: number, message: *}>}
+	 */
+	async getArticlePageList(ctx, isSimple = false) {
 		const {title, limit, offset} = ctx.query;
 		const requestBody = {title, limit, offset};
 		const validator = Joi.validate(requestBody, ArticleSchema.getArticlePageList);
@@ -44,16 +50,18 @@ const article = {
 		if (res && res.length) {
 			response.code = 0;
 			response.message = '成功';
-			async function processArray(arr) {
-				for (let item of arr) {
-					let commentList = await articleSql.getArticleCommentList(item.id);
-					item.comments = commentList.length;
-					item.content = html_decode(item.content);
-					item.tagIds = item.tagIds.split(',').map(item => item - 0);
-					item.categories = item.categories.split(',').map(item => item - 0);
+			if (!isSimple) {
+				async function processArray(arr) {
+					for (let item of arr) {
+						let commentList = await articleSql.getArticleCommentList(item.id);
+						item.comments = commentList.length;
+						item.content = html_decode(item.content);
+						item.tagIds = item.tagIds.split(',').map(item => item - 0);
+						item.categories = item.categories.split(',').map(item => item - 0);
+					}
 				}
+				await processArray(articlePageList);
 			}
-			await processArray(articlePageList);
 			response.result = {items: articlePageList, total, limit: limit - 0, offset: offset - 0}
 		} else {
 			response.code = 404;

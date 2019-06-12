@@ -4,14 +4,14 @@ const databaseNameList = require('../../config/index').databaseNameList;
 const {ARTICLE_TABLE_NAME, ARTICLE_COMMENT_TABLE_NAME, ARTICLE_REPLY_TABLE_NAME, USER_TABLE_NAME} = databaseNameList;
 const article = {
 	async getArticleAllList() {
-		return query(`select * from ${ARTICLE_TABLE_NAME}`)
+		return query(`select * from ${ARTICLE_TABLE_NAME} group by createTime desc`)
 		// return query(`SELECT a.*, b.id commentId, b.content commentContent, b.createTime commentCreateTime, c.username userName
 		// FROM ${ARTICLE_TABLE_NAME} a LEFT JOIN ${ARTICLE_COMMENT_TABLE_NAME} b
 		// ON a.id = b.articleId LEFT JOIN ${USER_TABLE_NAME} c ON b.userId = c.id;`)
 	},
 	async getArticlePageList(params) {
 		const {limit, offset, title} = params;
-		return query(`select sql_calc_found_rows  * from ${ARTICLE_TABLE_NAME} where title like '%${title || ''}%' limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`)
+		return query(`select sql_calc_found_rows  * from ${ARTICLE_TABLE_NAME} where title like '%${title || ''}%' group by createTime desc limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`)
 	},
 	async getArticleById(id) {
 		return query(`select * from ${ARTICLE_TABLE_NAME} where id=${id}`);
