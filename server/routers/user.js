@@ -6,6 +6,7 @@ user
 	.post('/login', async ctx => userModel.login(ctx))
 	.post('/user', async ctx => userModel.registerUser(ctx))
 	.patch('/user/:id', async ctx => userModel.updateUser(ctx))
+	.get('/user/check-auth', async ctx => userModel.checkUserAuth(ctx))
 	.get('/user/page', async ctx => userModel.getUserList(ctx));
 
 module.exports = user;

@@ -3,7 +3,7 @@ const UserSchema = require('../schemas/user');
 
 const createResponse = require('../utils/create-response');
 const userSql = require('../sql/user');
-const { createToken } = require('../utils/check-token');
+const { createToken, verifyToken } = require('../utils/check-token');
 const user = {
 	async login(ctx) {
 		const requestBody = ctx.request.body;
@@ -77,7 +77,6 @@ const user = {
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
 		}
-
 		const findUser = await userSql.queryUseExists(oldPassword ? {email, password: oldPassword} : {email, password});
 		let findUserInfo;
 		if (findUser && findUser.length > 0) {
@@ -95,6 +94,18 @@ const user = {
 		const updateUserInfo = updateUser[0];
 		response.result = Object.assign({}, updateUserInfo, {token: createToken(Object.assign({}, updateUserInfo))});
 		delete response.result.password;
+		ctx.body = response;
+	},
+	async checkUserAuth(ctx) {
+		const response = createResponse();
+		const authorization = ctx.header.authorization;
+		let hasToken = verifyToken(authorization);
+		if (authorization && hasToken === true) {
+			response.message = '成功'
+		} else {
+			response.code = 900;
+			response.message = '登录信息不存在!'
+		}
 		ctx.body = response;
 	}
 };
