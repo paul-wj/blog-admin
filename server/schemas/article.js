@@ -6,11 +6,18 @@ const getArticlePageList = Joi.object().keys({
 	offset: Joi.number().required().error(new Error('起始行不能为空')),
 });
 
-const getArticleByTagId = Joi.object().keys({
-	tagId: Joi.string().required().error(new Error('标签Id不能为空')),
+const getArticlePageListByCategoryId = Joi.object().keys({
+	categoryId: Joi.number().required().error(new Error('目录Id不能为空')),
 	limit: Joi.number().required().error(new Error('页码不能为空')),
 	offset: Joi.number().required().error(new Error('起始行不能为空')),
 });
+
+const getArticlePageListByTagId = Joi.object().keys({
+	tagId: Joi.number().required().error(new Error('标签Id不能为空')),
+	limit: Joi.number().required().error(new Error('页码不能为空')),
+	offset: Joi.number().required().error(new Error('起始行不能为空')),
+});
+
 
 
 const createArticle = Joi.object().keys({
@@ -63,5 +70,6 @@ module.exports = {
 	deleteArticleCommentReply,
 	deleteArticleComment,
 	getArticlePageList,
-	getArticleByTagId
+	getArticlePageListByCategoryId,
+	getArticlePageListByTagId
 };

@@ -93,15 +93,38 @@ const article = {
 		}
 		ctx.body = response;
 	},
-	async getArticleByTagId(ctx) {
-		const {title, limit, offset} = ctx.query;
-		const requestBody = {title, limit, offset};
-		const validator = Joi.validate(requestBody, ArticleSchema.getArticleByTagId);
+	async getArticlePageListByCategoryId(ctx) {
+		const categoryId = ctx.params.id;
+		const {limit, offset} = ctx.query;
+		const requestBody = {categoryId, limit, offset};
+		const validator = Joi.validate(requestBody, ArticleSchema.getArticlePageListByCategoryId);
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
 		}
 		let response = createResponse();
-		let res = await articleSql.getArticlePageList(requestBody);
+		let res = await articleSql.getArticlePageListByCategoryId(requestBody);
+		const articlePageList = res[0];
+		const total = res[1][0].total;
+		if (res && res.length) {
+			response.code = 0;
+			response.message = '成功';
+			response.result = {items: articlePageList, total, limit: limit - 0, offset: offset - 0}
+		} else {
+			response.code = 404;
+			response.message = '信息不存在';
+		}
+		ctx.body = response;
+	},
+	async getArticlePageListByTagId(ctx) {
+		const tagId = ctx.params.id;
+		const {limit, offset} = ctx.query;
+		const requestBody = {tagId, limit, offset};
+		const validator = Joi.validate(requestBody, ArticleSchema.getArticlePageListByTagId);
+		if (validator.error) {
+			return ctx.body = {code: 400, message: validator.error.message}
+		}
+		let response = createResponse();
+		let res = await articleSql.getArticlePageListByTagId(requestBody);
 		const articlePageList = res[0];
 		const total = res[1][0].total;
 		if (res && res.length) {

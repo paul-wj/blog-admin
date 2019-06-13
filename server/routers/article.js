@@ -7,6 +7,8 @@ article
 	.get('/article/page', async ctx => articleModel.getArticlePageList(ctx))
 	.get('/article/page/simple', async ctx => articleModel.getArticlePageList(ctx, true))
 	.get('/article/:id', async ctx => articleModel.getArticleById(ctx))
+	.get('/article/category/:id', async ctx => articleModel.getArticlePageListByCategoryId(ctx))
+	.get('/article/tag/:id', async ctx => articleModel.getArticlePageListByTagId(ctx))
 	.post('/article', async ctx => articleModel.createArticle(ctx))
 	.patch('/article/:id', async ctx => articleModel.editArticle(ctx))
 	.delete('/article/:id', async ctx => articleModel.deleteArticle(ctx))

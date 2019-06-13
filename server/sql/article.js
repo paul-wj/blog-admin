@@ -19,6 +19,14 @@ const article = {
 		// FROM ${ARTICLE_TABLE_NAME} a LEFT JOIN ${ARTICLE_COMMENT_TABLE_NAME} b
 		// ON a.id = b.articleId LEFT JOIN ${USER_TABLE_NAME} c ON b.userId = c.id where a.id=${id};`)
 	},
+	async getArticlePageListByCategoryId(params) {
+		const {categoryId, limit, offset} = params;
+		return query(`select sql_calc_found_rows * from ${ARTICLE_TABLE_NAME} where FIND_IN_SET(${categoryId}, categories) group by createTime desc limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`);
+	},
+	async getArticlePageListByTagId(params) {
+		const {tagId, limit, offset} = params;
+		return query(`select sql_calc_found_rows * from ${ARTICLE_TABLE_NAME} where FIND_IN_SET(${tagId}, tagIds) group by createTime desc limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`);
+	},
 	async createArticle(data) {
 		let sqlStatement = `insert into ${ARTICLE_TABLE_NAME} (title, categories, tagIds, content, updateTime, createTime) values (?, ?, ?, ?, ?, ?)`;
 		let currentDate = new Date().toLocaleString();
