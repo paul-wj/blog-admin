@@ -5,7 +5,7 @@ const user = {
 	async registerUser(users) {
 		let createTime = new Date().toLocaleString();
 		let sqlStatement = `insert into ${USER_TABLE_NAME} (email, username, password, createTime) values (?, ?, ?, ?)`;
-		return query(sqlStatement, [users.email, users.userName, users.password, createTime])
+		return query(sqlStatement, [users.email, users.username, users.password, createTime])
 	},
 	async queryUseExists(users) {
 		return query(`select * from ${USER_TABLE_NAME} where BINARY email='${users.email}' and password='${users.password}'`)
