@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "supervisor index.js",
+    "server": "node index.js",
     "init sql": "node ./init/index.js"
   },
   "author": "paul",
