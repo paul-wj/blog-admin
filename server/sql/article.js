@@ -46,6 +46,9 @@ const article = {
 		let currentDate = new Date().toLocaleString();
 		return query(sqlStatement, [id, data.userId, data.content, currentDate])
 	},
+	async getArticleCommentAllList() {
+		return query(`select * from ${ARTICLE_COMMENT_TABLE_NAME} group by createTime desc`)
+	},
 	async getArticleCommentList(id) {
 		return query(`select a.*, b.username userName from ${ARTICLE_COMMENT_TABLE_NAME} a left join ${USER_TABLE_NAME} b ON a.userId = b.id where a.articleId=${id}`)
 	},
@@ -59,6 +62,9 @@ const article = {
 	},
 	async deleteArticleCommentReplyByReplyId(replyId, isReply = true) {
 		return query(`delete from ${ARTICLE_REPLY_TABLE_NAME} where id = ${replyId} ${isReply ? `or (replyWay=20 and replyId=${replyId})` : ''}`)
+	},
+	async getArticleCommentAllReplyList() {
+		return query(`select * from ${ARTICLE_REPLY_TABLE_NAME} group by createTime desc`)
 	},
 	async getArticleCommentReplyListByCommentId(commentId) {
 		return query(`select reply.*, user.username userName, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.commentId=${commentId}`)
