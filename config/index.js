@@ -1,3 +1,5 @@
+const r = require('path').resolve;
+
 const config = {
 	port: 9000,
 	database: {
@@ -22,6 +24,8 @@ const config = {
 		LOGGER_TABLE_NAME: 'log_info',
 		TAG_TABLE_NAME: 'tag_info',
 		CATEGORY_TABLE_NAME: 'category_info'
-	}
+	},
+	BASE_PATH: r(__dirname, '../'),
+	STATIC_PATH: r(__dirname, '../static')
 };
 module.exports = config;
