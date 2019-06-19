@@ -3,7 +3,7 @@ const UserSchema = require('../schemas/user');
 
 const createResponse = require('../utils/create-response');
 const userSql = require('../sql/user');
-const { createToken, verifyToken } = require('../utils/check-token');
+const { createToken, verifyToken, getTokenResult } = require('../utils/check-token');
 const user = {
 	async login(ctx) {
 		const requestBody = ctx.request.body;
@@ -101,6 +101,11 @@ const user = {
 		const authorization = ctx.header.authorization;
 		let hasToken = verifyToken(authorization);
 		if (authorization && hasToken === true) {
+			const userInfo = getTokenResult(authorization);
+			response.result = Object.assign({}, userInfo, {token: authorization});
+			['exp', 'iat', 'password'].forEach(key => {
+				delete response.result[key];
+			});
 			response.message = '成功'
 		} else {
 			response.code = 900;

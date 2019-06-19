@@ -1,5 +1,6 @@
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const PRIVATE_KEY = 'abc';
+const config = require('../../config');
 const whiteList = [
 	{url: '/user', method: 'post'},
 	{url: '/login', method: 'post'},
@@ -9,14 +10,17 @@ const createToken = (contentOptions) => {
 	if (!contentOptions) {
 		return
 	}
-	return jwt.sign(contentOptions, PRIVATE_KEY, {
-		expiresIn: 60*60*2
+	let privateKey = fs.readFileSync(config.PRIVATE_KEY);
+	return jwt.sign(contentOptions, privateKey, {
+		expiresIn: 60*60*2,
+		algorithm: 'RS256'
 	})
 };
 
 const verifyToken = token => {
 	let result;
-	jwt.verify(token, PRIVATE_KEY, (err, decode) => {
+	const cert = fs.readFileSync(config.PRIVATE_KEY);
+	jwt.verify(token, cert, (err, decode) => {
 		result =  err ? {err} : true;
 	});
 	return result;
@@ -24,7 +28,8 @@ const verifyToken = token => {
 
 const getTokenResult = token => {
 	let result;
-	jwt.verify(token, PRIVATE_KEY, (err, decode) => {
+	const cert = fs.readFileSync(config.PRIVATE_KEY);
+	jwt.verify(token, cert, (err, decode) => {
 		result =  err ? null : decode;
 	});
 	return result;

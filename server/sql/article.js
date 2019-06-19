@@ -50,7 +50,7 @@ const article = {
 		return query(`select * from ${ARTICLE_COMMENT_TABLE_NAME} group by createTime desc`)
 	},
 	async getArticleCommentList(id) {
-		return query(`select a.*, b.username userName from ${ARTICLE_COMMENT_TABLE_NAME} a left join ${USER_TABLE_NAME} b ON a.userId = b.id where a.articleId=${id}`)
+		return query(`select a.*, b.username userName, b.profilePicture userProfilePicture from ${ARTICLE_COMMENT_TABLE_NAME} a left join ${USER_TABLE_NAME} b ON a.userId = b.id where a.articleId=${id}`)
 	},
 	async deleteArticleComment(commentId) {
 		return query(`delete ${ARTICLE_COMMENT_TABLE_NAME}, ${ARTICLE_REPLY_TABLE_NAME} from ${ARTICLE_COMMENT_TABLE_NAME} left join ${ARTICLE_REPLY_TABLE_NAME} on ${ARTICLE_COMMENT_TABLE_NAME}.id = ${ARTICLE_REPLY_TABLE_NAME}.commentId where ${ARTICLE_COMMENT_TABLE_NAME}.id = ${commentId}`)
@@ -67,10 +67,10 @@ const article = {
 		return query(`select * from ${ARTICLE_REPLY_TABLE_NAME} group by createTime desc`)
 	},
 	async getArticleCommentReplyListByCommentId(commentId) {
-		return query(`select reply.*, user.username userName, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.commentId=${commentId}`)
+		return query(`select reply.*, user.username userName, user.profilePicture userProfilePicture, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.commentId=${commentId}`)
 	},
 	async getArticleCommentReplyListByReplyWayAndReplyId(replyWay, replyId) {
-		return query(`select reply.*, user.username userName, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.replyWay=${replyWay} and reply.replyId=${replyId}`)
+		return query(`select reply.*, user.username userName, user.profilePicture userProfilePicture, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.replyWay=${replyWay} and reply.replyId=${replyId}`)
 	}
 };
 module.exports = article;

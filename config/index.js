@@ -26,6 +26,7 @@ const config = {
 		CATEGORY_TABLE_NAME: 'category_info'
 	},
 	BASE_PATH: r(__dirname, '../'),
-	STATIC_PATH: r(__dirname, '../static')
+	STATIC_PATH: r(__dirname, '../static'),
+	PRIVATE_KEY: r(__dirname, '../private.key')
 };
 module.exports = config;
