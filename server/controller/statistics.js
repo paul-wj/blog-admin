@@ -1,7 +1,12 @@
 const dayJs = require('dayjs');
+const fs = require('fs');
+const path = require('path');
 const Joi = require('joi');
+
 const createResponse = require('../utils/create-response');
 const articleSql = require('../sql/article');
+const config = require('../../config');
+
 const statistics = {
 	async getStatisticsForArticle(ctx) {
 		const res = await articleSql.getArticleAllList();
@@ -76,6 +81,28 @@ const statistics = {
 		}
 		response.message = '成功';
 		response.result = result;
+		ctx.body = response;
+	},
+	async uploadFile(ctx) {
+		const {host} = ctx.request.header;
+		let response = createResponse();
+		const file = ctx.request.files.file;
+		const fileName = file.name;
+		// 创建可读流
+		const render = fs.createReadStream(file.path);
+		const filePath = path.join(config.BASE_PATH, 'static/upload/', fileName);
+		const fileDir = path.join(config.BASE_PATH, 'static/upload/');
+		if (!fs.existsSync(fileDir)) {
+			fs.mkdirSync(fileDir, err => {
+				console.log(err);
+				console.log('创建失败')
+			});
+		}
+		// 创建写入流
+		const upStream = fs.createWriteStream(filePath);
+		render.pipe(upStream);
+		response.result = `http://${host}/upload/${fileName}`;
+		response.message = '上传成功';
 		ctx.body = response;
 	}
 };
