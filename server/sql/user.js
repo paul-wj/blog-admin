@@ -4,8 +4,8 @@ const {USER_TABLE_NAME} = databaseNameList;
 const user = {
 	async registerUser(users) {
 		let createTime = new Date().toLocaleString();
-		let sqlStatement = `insert into ${USER_TABLE_NAME} (email, username, password, createTime) values (?, ?, ?, ?)`;
-		return query(sqlStatement, [users.email, users.username, users.password, createTime])
+		let sqlStatement = `insert into ${USER_TABLE_NAME} (email, username, password, profilePicture, createTime) values (?, ?, ?, ?, ?)`;
+		return query(sqlStatement, [users.email, users.username, users.password, users.profilePicture, createTime])
 	},
 	async queryUseExists(users) {
 		return query(`select * from ${USER_TABLE_NAME} where BINARY email='${users.email}' and password='${users.password}'`)
@@ -18,7 +18,7 @@ const user = {
 	},
 	async updateUser(id, users) {
 		let updateTime = new Date().toLocaleString();
-		return query(`update ${USER_TABLE_NAME} set email='${users.email}', username='${users.username}', password='${users.password}', updateTime='${updateTime}' where id = ${id}`)
+		return query(`update ${USER_TABLE_NAME} set email='${users.email}', username='${users.username}', password='${users.password}', profilePicture='${users.profilePicture}', updateTime='${updateTime}' where id = ${id}`)
 	}
 };
 

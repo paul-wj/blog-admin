@@ -28,7 +28,7 @@ const user = {
 	async registerUser(ctx) {
 		const requestBody = ctx.request.body;
 		const response = createResponse();
-		const {email, username, password} = requestBody;
+		const {email, username, password, profilePicture} = requestBody;
 		const validator = Joi.validate(requestBody, UserSchema.registerUser);
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
@@ -37,7 +37,7 @@ const user = {
 		if (findUser && findUser.length > 0) {
 			return ctx.body = {code: 400, message: '当前用户已注册'}
 		}
-		let res = await userSql.registerUser({email, username, password});
+		let res = await userSql.registerUser({email, username, password, profilePicture});
 		if (res && res.insertId - 0 > 0) {
 			response.message = '成功';
 		}
@@ -72,7 +72,7 @@ const user = {
 		const id = ctx.params.id;
 		const requestBody = ctx.request.body;
 		const response = createResponse();
-		const {email, username, password, oldPassword} = requestBody;
+		const {email, username, password, oldPassword, profilePicture} = requestBody;
 		const validator = Joi.validate(requestBody, UserSchema.updateUser);
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
@@ -85,7 +85,7 @@ const user = {
 			return ctx.body = {code: 400, message:  `${oldPassword ? '原' : ''}密码错误`}
 		}
 
-		let res = await userSql.updateUser(id, {email, username, password});
+		let res = await userSql.updateUser(id, {email, username, password, profilePicture});
 		if (res && res.insertId - 0 > 0) {
 			response.message = `成功`;
 		}
