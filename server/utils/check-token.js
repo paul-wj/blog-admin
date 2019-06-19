@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const PRIVATE_KEY = 'abc';
 const whiteList = [
 	{url: '/user', method: 'post'},
-	{url: '/login', method: 'post'}
+	{url: '/login', method: 'post'},
+	{url: '/upload', method: 'post'}
 ];
 const createToken = (contentOptions) => {
 	if (!contentOptions) {
