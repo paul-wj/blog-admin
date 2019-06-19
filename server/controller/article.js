@@ -17,7 +17,7 @@ const article = {
 				for (let item of arr) {
 					let commentList = await articleSql.getArticleCommentList(item.id);
 					item.comments = commentList.length;
-					item.content = html_decode(item.content);
+					item.content = '';//减小异步请求size
 					item.tagIds = item.tagIds.split(',').map(item => item - 0);
 					item.categories = item.categories.split(',').map(item => item - 0);
 				}
@@ -45,7 +45,7 @@ const article = {
 		}
 		let response = createResponse();
 		let res = await articleSql.getArticlePageList(requestBody);
-		const articlePageList = res[0];
+		let articlePageList = res[0];
 		const total = res[1][0].total;
 		if (res && res.length) {
 			response.code = 0;
@@ -54,13 +54,17 @@ const article = {
 				async function processArray(arr) {
 					for (let item of arr) {
 						let commentList = await articleSql.getArticleCommentList(item.id);
+						const htmlContent = html_decode(item.content);
+						const index = htmlContent.indexOf('<!--more-->');
 						item.comments = commentList.length;
-						item.content = html_decode(item.content);
+						item.content = index > -1 ? htmlContent.slice(0, index) : htmlContent;
 						item.tagIds = item.tagIds.split(',').map(item => item - 0);
 						item.categories = item.categories.split(',').map(item => item - 0);
 					}
 				}
 				await processArray(articlePageList);
+			} else {
+				articlePageList = articlePageList.map(item => Object.assign({}, item, {content: ''}))
 			}
 			response.result = {items: articlePageList, total, limit: limit - 0, offset: offset - 0}
 		} else {
@@ -108,7 +112,7 @@ const article = {
 		if (res && res.length) {
 			response.code = 0;
 			response.message = '成功';
-			response.result = {items: articlePageList, total, limit: limit - 0, offset: offset - 0}
+			response.result = {items: articlePageList.map(item => Object.assign({}, item, {content: ''})), total, limit: limit - 0, offset: offset - 0}
 		} else {
 			response.code = 404;
 			response.message = '信息不存在';
@@ -130,7 +134,7 @@ const article = {
 		if (res && res.length) {
 			response.code = 0;
 			response.message = '成功';
-			response.result = {items: articlePageList, total, limit: limit - 0, offset: offset - 0}
+			response.result = {items: articlePageList.map(item => Object.assign({}, item, {content: ''})), total, limit: limit - 0, offset: offset - 0}
 		} else {
 			response.code = 404;
 			response.message = '信息不存在';
