@@ -3,6 +3,7 @@ CREATE TABLE  IF NOT EXISTS  `user_info` (
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `profilePicture` varchar(255) DEFAULT NULL,
   `nick` varchar(255) DEFAULT NULL,
   `createTime` varchar(20) DEFAULT NULL,
   `updateTime` varchar(20) DEFAULT NULL,
