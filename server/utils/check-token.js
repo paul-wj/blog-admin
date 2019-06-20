@@ -19,7 +19,7 @@ const createToken = (contentOptions) => {
 
 const verifyToken = token => {
 	let result;
-	const cert = fs.readFileSync(config.PRIVATE_KEY);
+	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	jwt.verify(token, cert, (err, decode) => {
 		result =  err ? {err} : true;
 	});
@@ -28,7 +28,7 @@ const verifyToken = token => {
 
 const getTokenResult = token => {
 	let result;
-	const cert = fs.readFileSync(config.PRIVATE_KEY);
+	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	jwt.verify(token, cert, (err, decode) => {
 		result =  err ? null : decode;
 	});

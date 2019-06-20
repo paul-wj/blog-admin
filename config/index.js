@@ -27,6 +27,7 @@ const config = {
 	},
 	BASE_PATH: r(__dirname, '../'),
 	STATIC_PATH: r(__dirname, '../static'),
-	PRIVATE_KEY: r(__dirname, '../private.key')
+	PRIVATE_KEY: r(__dirname, '../private.key'),
+	PUBLIC_KEY: r(__dirname, '../public.key')
 };
 module.exports = config;
