@@ -84,7 +84,6 @@ const statistics = {
 		ctx.body = response;
 	},
 	async uploadFile(ctx) {
-		const {host} = ctx.request.header;
 		let response = createResponse();
 		const file = ctx.request.files.file;
 		const fileName = file.name;
@@ -101,7 +100,7 @@ const statistics = {
 		// 创建写入流
 		const upStream = fs.createWriteStream(filePath);
 		render.pipe(upStream);
-		response.result = `http://${host}/upload/${fileName}`;
+		response.result = `https://www.wangjie818.wang/upload/${fileName}`;
 		response.message = '上传成功';
 		ctx.body = response;
 	}
