@@ -28,4 +28,14 @@ const html_decode = str => {
 	return result;
 };
 
-module.exports = {html_encode, html_decode};
+const asyncDbCallback = (err, response, callback) => {
+	if (!err) {
+		response.message = '成功';
+	} else {
+		response.code = 400;
+		response.message = '网络错误';
+	}
+	callback && callback();
+};
+
+module.exports = {html_encode, html_decode, asyncDbCallback};

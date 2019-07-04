@@ -17,7 +17,26 @@ let query = (sql, values) => {
 					if (err) {
 						reject(err);
 					} else {
-						resolve(rows)
+						resolve(rows);
+					}
+					connection.release();
+				})
+			}
+		});
+	});
+};
+
+let newQuery = (sql, values) => {
+	return new Promise((resolve, reject) => {
+		pool.getConnection((err, connection) => {
+			if(err){
+				reject({err, results: null});
+			} else {
+				connection.query(sql, values, (err, rows) => {
+					if (err) {
+						reject({err, results: null});
+					} else {
+						resolve({err: null, results: rows});
 					}
 					connection.release();
 				})
