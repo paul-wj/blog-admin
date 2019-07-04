@@ -6,10 +6,12 @@ module.exports = function logger(ctx, next) {
 	const userInfo = getTokenResult(ctx.header.authorization);
 	const {request} = ctx;
 	const loggerData = {
-		userName: userInfo ? userInfo.name : null,
+		userName: userInfo ? userInfo.username : null,
 		userId: userInfo ? userInfo.id : null,
 		method: request.method,
 		host: request.header.host,
+		origin: request.header.origin,
+		userAgent: request.header['user-agent'],
 		url: request.url,
 		status: null
 	};
