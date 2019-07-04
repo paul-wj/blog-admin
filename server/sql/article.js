@@ -28,10 +28,10 @@ const article = {
 		return query(`select sql_calc_found_rows * from ${ARTICLE_TABLE_NAME} where FIND_IN_SET(${tagId}, tagIds) group by createTime desc limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`);
 	},
 	async createArticle(data) {
-		let sqlStatement = `insert into ${ARTICLE_TABLE_NAME} (title, categories, tagIds, content, updateTime, createTime) values (?, ?, ?, ?, ?, ?)`;
+		let sqlStatement = `insert into ${ARTICLE_TABLE_NAME} (title, categories, tagIds, content, userId, updateTime, createTime) values (?, ?, ?, ?, ?, ?, ?)`;
 		let currentDate = new Date().toLocaleString();
 		let content = html_encode(data.content);
-		return query(sqlStatement, [data.title, data.categories, data.tagIds, content, currentDate, currentDate])
+		return query(sqlStatement, [data.title, data.categories, data.tagIds, content, data.userId, currentDate, currentDate])
 	},
 	async editArticle(id, data) {
 		let currentDate = new Date().toLocaleString();

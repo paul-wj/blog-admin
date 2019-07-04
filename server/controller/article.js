@@ -142,6 +142,8 @@ const article = {
 		ctx.body = response;
 	},
 	async createArticle(ctx) {
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
 		let requestBody = ctx.request.body;
 		let response = createResponse();
 		let {title, tagIds, categories, content} = requestBody;
@@ -151,8 +153,8 @@ const article = {
 		}
 		tagIds = tagIds.toString();
 		categories = categories.toString();
-		let res = await articleSql.createArticle({title, tagIds, categories, content});
-		if (res && res.insertId - 0 > 0) {
+		let res = await articleSql.createArticle({title, tagIds, categories, content, userId: userInfo.id});
+		if (res && res.insertId !== undefined) {
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -161,6 +163,7 @@ const article = {
 		let requestBody = ctx.request.body;
 		let id = ctx.params.id;
 		let response = createResponse();
+		response.code = 400;
 		if (!id) {
 			response.message = '当前文章不存在（id为空）';
 			return ctx.body = response
@@ -181,21 +184,42 @@ const article = {
 			response.message = '文章内容不能为空';
 			return ctx.body = response
 		}
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		const [currentArticle] = await articleSql.getArticleById(id);
+		if (currentArticle.userId !== userInfo.id) {
+			response.message = '不能编辑他人上传的文章!';
+			return ctx.body = response
+		}
+
 		let res = await articleSql.editArticle(id, requestBody);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
 	},
 	async deleteArticle(ctx) {
-		let id = ctx.params.id;
+		const id = ctx.params.id;
 		let response = createResponse();
+		response.code = 400;
 		if (!id) {
 			response.message = '当前文章不存在（id为空）';
 			return ctx.body = response
 		}
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		const [currentArticle] = await articleSql.getArticleById(id);
+		if (currentArticle.userId !== userInfo.id) {
+			response.message = '不能删除他人上传的文章!';
+			return ctx.body = response
+		}
+
 		let res = await articleSql.deleteArticle(id);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.affectedRows - 0 > 0) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -265,7 +289,7 @@ const article = {
 			return ctx.body = response
 		}
 		let res = await articleSql.createArticleComment(id, {userId: userInfo.id, content: requestBody.content});
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -279,7 +303,7 @@ const article = {
 		}
 		let response = createResponse();
 		let res = await articleSql.deleteArticleComment(commentId);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.affectedRows - 0 > 0) {
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -307,7 +331,7 @@ const article = {
 		} else {
 			res = await articleSql.createArticleCommentReply(requestBody.commentId, requestBody);
 		}
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -321,7 +345,7 @@ const article = {
 		}
 		let response = createResponse();
 		let res = await articleSql.deleteArticleCommentReplyByReplyId(replyId);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
 			response.message = '成功';
 		}
 		ctx.body = response;
