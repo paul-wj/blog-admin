@@ -5,10 +5,13 @@ const tagCategory = {
 	async getTagAllList() {
 		return query(`select * from ${TAG_TABLE_NAME}`)
 	},
+	async getTagById(id) {
+		return query(`select * from ${TAG_TABLE_NAME} where id=${id}`);
+	},
 	async createTag(data) {
-		let sqlStatement = `insert into ${TAG_TABLE_NAME} (name, color, updateTime, createTime) values (?, ?, ?, ?)`;
+		let sqlStatement = `insert into ${TAG_TABLE_NAME} (name, color, userId, updateTime, createTime) values (?, ?, ?, ?, ?)`;
 		let currentDate = new Date().toLocaleString();
-		return query(sqlStatement, [data.name, data.color, currentDate, currentDate])
+		return query(sqlStatement, [data.name, data.color, data.userId, currentDate, currentDate])
 	},
 	async editTag(id, data) {
 		let currentDate = new Date().toLocaleString();
@@ -20,10 +23,13 @@ const tagCategory = {
 	async getCategoryAllList() {
 		return query(`select * from ${CATEGORY_TABLE_NAME}`)
 	},
+	async getCategoryById(id) {
+		return query(`select * from ${CATEGORY_TABLE_NAME} where id=${id}`);
+	},
 	async createCategory(data) {
-		let sqlStatement = `insert into ${CATEGORY_TABLE_NAME} (name, updateTime, createTime) values (?, ?, ?)`;
+		let sqlStatement = `insert into ${CATEGORY_TABLE_NAME} (name, userId, updateTime, createTime) values (?, ?, ?, ?)`;
 		let currentDate = new Date().toLocaleString();
-		return query(sqlStatement, [data.name, currentDate, currentDate])
+		return query(sqlStatement, [data.name, data.userId, currentDate, currentDate])
 	},
 	async editCategory(id, data) {
 		let currentDate = new Date().toLocaleString();

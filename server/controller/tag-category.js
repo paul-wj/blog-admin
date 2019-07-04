@@ -1,6 +1,8 @@
 const tagCategory = require('../sql/tag-category');
 const articleSql = require('../sql/article');
 const createResponse = require('../utils/create-response');
+const {getTokenResult} = require('../utils/check-token');
+
 const article = {
 	async getTagAllList(ctx) {
 		let res = await tagCategory.getTagAllList();
@@ -19,6 +21,7 @@ const article = {
 	async createTag(ctx) {
 		let requestBody = ctx.request.body;
 		let response = createResponse();
+		response.code = 400;
 		if (!requestBody.name) {
 			response.message = '请输入标签名';
 			return ctx.body = response
@@ -27,8 +30,13 @@ const article = {
 			response.message = '请输入标签颜色';
 			return ctx.body = response
 		}
-		let res = await tagCategory.createTag(requestBody);
-		if (res && res.insertId - 0 > 0) {
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+
+		let res = await tagCategory.createTag(Object.assign({}, requestBody, {userId: userInfo.id}));
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -37,10 +45,20 @@ const article = {
 		let requestBody = ctx.request.body;
 		let id = ctx.params.id;
 		let response = createResponse();
+		response.code = 400;
 		if (!id) {
 			response.message = '当前标签不存在（id为空）';
 			return ctx.body = response
 		}
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		const [currentTag] = await tagCategory.getTagById(id);
+		if (currentTag.userId !== userInfo.id) {
+			response.message = '不能编辑他人创建标签!';
+			return ctx.body = response;
+		}
+
 		if (!requestBody.name) {
 			response.message = '请输入标签名';
 			return ctx.body = response
@@ -50,7 +68,8 @@ const article = {
 			return ctx.body = response
 		}
 		let res = await tagCategory.editTag(id, requestBody);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -58,12 +77,23 @@ const article = {
 	async deleteTag(ctx) {
 		let id = ctx.params.id;
 		let response = createResponse();
+		response.code = 400;
 		if (!id) {
 			response.message = '当前标签不存在（id为空）';
-			return ctx.body = response
+			return ctx.body = response;
 		}
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		const [currentTag] = await tagCategory.getTagById(id);
+		if (currentTag.userId !== userInfo.id) {
+			response.message = '不能删除他人创建标签!';
+			return ctx.body = response;
+		}
+
 		let res = await tagCategory.deleteTag(id);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -71,6 +101,7 @@ const article = {
 	async getCategoryAllList(ctx) {
 		let res = await tagCategory.getCategoryAllList();
 		let response = createResponse(true);
+		response.code = 400;
 		const articleAllList = await articleSql.getArticleAllList();
 		if (res && res.length) {
 			response.code = 0;
@@ -85,12 +116,16 @@ const article = {
 	async createCategory(ctx) {
 		let requestBody = ctx.request.body;
 		let response = createResponse();
+		response.code = 400;
 		if (!requestBody.name) {
 			response.message = '请输入目录名';
 			return ctx.body = response
 		}
-		let res = await tagCategory.createCategory(requestBody);
-		if (res && res.insertId - 0 > 0) {
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		let res = await tagCategory.createCategory(Object.assign({}, requestBody, {userId: userInfo.id}));
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -99,16 +134,27 @@ const article = {
 		let requestBody = ctx.request.body;
 		let id = ctx.params.id;
 		let response = createResponse();
+		response.code = 400;
 		if (!id) {
 			response.message = '当前目录不存在（id为空）';
 			return ctx.body = response
 		}
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		const [currentCategory] = await tagCategory.getCategoryById(id);
+		if (currentCategory.userId !== userInfo.id) {
+			response.message = '不能编辑他人创建目录!';
+			return ctx.body = response;
+		}
+
 		if (!requestBody.name) {
 			response.message = '请输入目录名';
 			return ctx.body = response
 		}
 		let res = await tagCategory.editCategory(id, requestBody);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -116,12 +162,23 @@ const article = {
 	async deleteCategory(ctx) {
 		let id = ctx.params.id;
 		let response = createResponse();
+		response.code = 400;
 		if (!id) {
 			response.message = '当前目录不存在（id为空）';
 			return ctx.body = response
 		}
+
+		const authorization = ctx.header.authorization;
+		const userInfo = getTokenResult(authorization);
+		const [currentCategory] = await tagCategory.getCategoryById(id);
+		if (currentCategory.userId !== userInfo.id) {
+			response.message = '不能删除他人创建目录!';
+			return ctx.body = response;
+		}
+
 		let res = await tagCategory.deleteCategory(id);
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
+			response.code = 0;
 			response.message = '成功';
 		}
 		ctx.body = response;
