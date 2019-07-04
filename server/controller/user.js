@@ -17,8 +17,8 @@ const user = {
 		if (res && res.length) {
 			response.message = '成功';
 			const userInfo = res[0];
+			delete userInfo.password;
 			response.result = Object.assign({}, userInfo, {token: createToken(Object.assign({}, userInfo))});
-			delete response.result.password;
 		} else {
 			response.code = 400;
 			response.message = '账号或密码错误';
@@ -38,7 +38,7 @@ const user = {
 			return ctx.body = {code: 400, message: '当前用户已注册'}
 		}
 		let res = await userSql.registerUser({email, username, password, profilePicture});
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
 			response.message = '成功';
 		}
 		ctx.body = response;
@@ -86,7 +86,7 @@ const user = {
 		}
 
 		let res = await userSql.updateUser(id, {email, username, password, profilePicture});
-		if (res && res.insertId - 0 > 0) {
+		if (res && res.insertId !== undefined) {
 			response.message = `成功`;
 		}
 		//更改用户最新信息后获取最新用户信息详情
