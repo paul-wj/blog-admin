@@ -32,7 +32,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 
 		let res = await tagCategory.createTag(Object.assign({}, requestBody, {userId: userInfo.id}));
 		if (res && res.insertId !== undefined) {
@@ -52,7 +52,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		const [currentTag] = await tagCategory.getTagById(id);
 		if (currentTag.userId !== userInfo.id) {
 			response.message = '不能编辑他人创建标签!';
@@ -84,7 +84,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		const [currentTag] = await tagCategory.getTagById(id);
 		if (currentTag.userId !== userInfo.id) {
 			response.message = '不能删除他人创建标签!';
@@ -122,7 +122,7 @@ const article = {
 			return ctx.body = response
 		}
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		let res = await tagCategory.createCategory(Object.assign({}, requestBody, {userId: userInfo.id}));
 		if (res && res.insertId !== undefined) {
 			response.code = 0;
@@ -141,7 +141,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		const [currentCategory] = await tagCategory.getCategoryById(id);
 		if (currentCategory.userId !== userInfo.id) {
 			response.message = '不能编辑他人创建目录!';
@@ -169,7 +169,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		const [currentCategory] = await tagCategory.getCategoryById(id);
 		if (currentCategory.userId !== userInfo.id) {
 			response.message = '不能删除他人创建目录!';

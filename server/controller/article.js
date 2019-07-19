@@ -143,7 +143,7 @@ const article = {
 	},
 	async createArticle(ctx) {
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		let requestBody = ctx.request.body;
 		let response = createResponse();
 		let {title, tagIds, categories, content} = requestBody;
@@ -186,7 +186,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		const [currentArticle] = await articleSql.getArticleById(id);
 		if (currentArticle.userId !== userInfo.id) {
 			response.message = '不能编辑他人上传的文章!';
@@ -210,7 +210,7 @@ const article = {
 		}
 
 		const authorization = ctx.header.authorization;
-		const userInfo = getTokenResult(authorization);
+		const userInfo = await getTokenResult(authorization);
 		const [currentArticle] = await articleSql.getArticleById(id);
 		if (currentArticle.userId !== userInfo.id) {
 			response.message = '不能删除他人上传的文章!';
@@ -272,7 +272,7 @@ const article = {
 
 	},
 	async createArticleComment(ctx) {
-		const userInfo = getTokenResult(ctx.header.authorization);
+		const userInfo = await getTokenResult(ctx.header.authorization);
 		const id = ctx.params.id;
 		const requestBody = ctx.request.body;
 		let response = createResponse();
@@ -309,7 +309,7 @@ const article = {
 		ctx.body = response;
 	},
 	async createArticleCommentReply(ctx) {
-		const userInfo = getTokenResult(ctx.header.authorization);
+		const userInfo = await getTokenResult(ctx.header.authorization);
 		const commentId = ctx.params.id;
 		const userId = userInfo.id;
 		const {type, content, toUserId, replyWay, replyId} = ctx.request.body;

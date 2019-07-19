@@ -1,6 +1,6 @@
 const Joi = require('joi');
+const redis = require('../utils/redis');
 const UserSchema = require('../schemas/user');
-
 const createResponse = require('../utils/create-response');
 const userSql = require('../sql/user');
 const { createToken, verifyToken, getTokenResult } = require('../utils/check-token');
@@ -99,9 +99,9 @@ const user = {
 	async checkUserAuth(ctx) {
 		const response = createResponse();
 		const authorization = ctx.header.authorization;
-		let hasToken = verifyToken(authorization);
+		let hasToken = await verifyToken(authorization);
 		if (authorization && hasToken === true) {
-			const userInfo = getTokenResult(authorization);
+			const userInfo = await getTokenResult(authorization);
 			response.result = Object.assign({}, userInfo, {token: authorization});
 			['exp', 'iat', 'password'].forEach(key => {
 				delete response.result[key];
@@ -111,6 +111,19 @@ const user = {
 			response.code = 900;
 			response.message = '登录信息不存在!'
 		}
+		ctx.body = response;
+	},
+	async loginOut(ctx) {
+		const response = createResponse();
+		const authorization = ctx.header.authorization;
+		const isAuth = await verifyToken(authorization);
+		const userInfo =  isAuth ? await getTokenResult(authorization) : null;
+		if (userInfo) {
+			const {id} = userInfo;
+			redis.del(`user_${id}`);
+		}
+		response.code = 0;
+		response.message = '成功';
 		ctx.body = response;
 	}
 };
