@@ -2,8 +2,8 @@ const koaLogger = require('koa-logger');
 const {getTokenResult} = require('./check-token');
 const {createLogger} = require('../sql/logger');
 
-module.exports = function logger(ctx, next) {
-	const userInfo = getTokenResult(ctx.header.authorization);
+module.exports = async function logger(ctx, next) {
+	const userInfo = await getTokenResult(ctx.header.authorization);
 	const {request} = ctx;
 	const loggerData = {
 		userName: userInfo ? userInfo.username : null,

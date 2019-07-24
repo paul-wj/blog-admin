@@ -5,7 +5,8 @@ const user = require('./user');
 const article = require('./article');
 const tagCategory = require('./tag-category');
 const statistics = require('./statistics');
-let routerList = [user, article, tagCategory, statistics];
+const recipe = require('./recipe');
+let routerList = [user, article, tagCategory, statistics, recipe];
 
 
 routerList.forEach( currentRouter => {

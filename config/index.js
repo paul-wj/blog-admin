@@ -20,7 +20,9 @@ const config = {
 		USER_TABLE_NAME: 'user_info',
 		LOGGER_TABLE_NAME: 'log_info',
 		TAG_TABLE_NAME: 'tag_info',
-		CATEGORY_TABLE_NAME: 'category_info'
+		CATEGORY_TABLE_NAME: 'category_info',
+		RECIPE_TABLE_NAME: 'recipe',
+		RECIPE_DATE_TABLE_NAME: 'recipe_date'
 	},
 	BASE_PATH: r(__dirname, '../'),
 	STATIC_PATH: r(__dirname, '../static'),

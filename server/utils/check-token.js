@@ -26,10 +26,12 @@ const verifyToken = async token => {
 	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	await jwt.verify(token, cert, async (err, decode) => {
 		if (err) {
-			result = {err}
+			console.log({err});
+			result = null;
 		} else {
-			result = await redis.get(`user_${decode.id}`);
-			result = Boolean(result);
+			await redis.get(`user_${decode.id}`, function (err, res) {
+				result = !err;
+			});
 			if (result) {
 				await redis.expire(`user_${decode.id}`, expiresIn)
 			}
@@ -43,16 +45,19 @@ const getTokenResult = async token => {
 	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	await jwt.verify(token, cert, async (err, decode) => {
 		if (err) {
+			console.log({err});
 			result = null;
 		} else {
-			const redisToken = await redis.get(`user_${decode.id}`);
-			result = !!redisToken ? decode : null;
+			await redis.get(`user_${decode.id}`, function (err, res) {
+				result = !err;
+			});
+			result = result ? decode : null;
 		}
 	});
 	return result;
 };
 
-const checkToken = (ctx, next) => {
+const checkToken = async (ctx, next) => {
 	const authorization = ctx.header.authorization;
 	let url = ctx.url.split('?')[0];
 	//whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))
@@ -63,7 +68,7 @@ const checkToken = (ctx, next) => {
 		}
 		return next();
 	}
-	let hasToken = verifyToken(authorization);
+	let hasToken = await verifyToken(authorization);
 	return hasToken === true ? next() : ctx.body = {
 		code: 900,
 		message: authorization ? '登录状态已失效，请重新登录' : '请登录后进行当前操作',
