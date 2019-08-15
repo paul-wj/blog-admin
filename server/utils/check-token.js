@@ -22,6 +22,9 @@ const createToken = (contentOptions) => {
 };
 
 const verifyToken = async token => {
+	if (!token) {
+		return false
+	}
 	let result;
 	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	await jwt.verify(token, cert, async (err, decode) => {
@@ -30,7 +33,7 @@ const verifyToken = async token => {
 			result = null;
 		} else {
 			await redis.get(`user_${decode.id}`, function (err, res) {
-				result = !err;
+				result = res !== null || !!err;
 			});
 			if (result) {
 				await redis.expire(`user_${decode.id}`, expiresIn)
@@ -41,15 +44,18 @@ const verifyToken = async token => {
 };
 
 const getTokenResult = async token => {
+	if (!token) {
+		return false
+	}
 	let result;
 	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	await jwt.verify(token, cert, async (err, decode) => {
 		if (err) {
-			console.log({err});
+			console.log({err}, 21312);
 			result = null;
 		} else {
 			await redis.get(`user_${decode.id}`, function (err, res) {
-				result = !err;
+				result = res !== null || !!err;
 			});
 			result = result ? decode : null;
 		}
