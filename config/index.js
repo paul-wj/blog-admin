@@ -11,7 +11,8 @@ const config = {
 	},
 	redis: {
 		host: '118.24.181.75',       //安装好的redis服务器地址
-		port: '6379'       //端口
+		port: '6379',       //端口
+		password: 'WjRedisPASS123'
 	},
 	databaseNameList: {
 		ARTICLE_TABLE_NAME: 'article_info',
