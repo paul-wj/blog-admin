@@ -1,5 +1,5 @@
 const cors = require('koa2-cors');
-const whiteList = ['http://localhost:3000', 'http://118.24.181.75:3000', 'http://www.wangjie818.wang:3000'];
+const whiteList = ['http://localhost:3000', 'http://188.188.188.233:8081', 'http://118.24.181.75:3000', 'http://www.wangjie818.wang:3000'];
 const crosOptions = {
 	origin: ctx => {
 		if (ctx.request.header.origin !== ctx.origin && whiteList.includes(ctx.request.header.origin)) {

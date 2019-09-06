@@ -1,3 +1,4 @@
+const axios = require('axios');
 const dayJs = require('dayjs');
 const fs = require('fs');
 const path = require('path');
@@ -102,6 +103,64 @@ const statistics = {
 		render.pipe(upStream);
 		response.result = `https://www.wangjie818.wang/upload/${fileName}`;
 		response.message = '上传成功';
+		ctx.body = response;
+	},
+	async getSongList(ctx) {
+		let response = createResponse(true);
+		const songUrl = 'https://api.imjad.cn/cloudmusic/?type=playlist&id=2972264118';
+		const result = await axios.get(songUrl).then(res => res).catch(err => err);
+		const res = result ? result.data : null;
+		let songIdList = [];
+		let songList = [];
+		const getFinallyAuthor = authorList => authorList.reduce((startValue, currentValue, currentIndex) => `${startValue}${currentValue.name}${currentIndex !== authorList.length -1 ? '/' : ''}`, '');
+		if (res && res.code === 200) {
+			const {playlist} = res;
+			if (playlist && playlist.tracks) {
+				songIdList = playlist.trackIds.map(item => item.id);
+				songList = playlist.tracks.map(track => {
+					const {id, name, ar, al} = track;
+					delete songIdList[songIdList.indexOf(id)];
+					return {
+						id,
+						author: getFinallyAuthor(ar),
+						name: name,
+						picUrl: al.picUrl,
+						url: `http://music.163.com/song/media/outer/url?id=${id}.mp3`
+					}
+				});
+				songIdList = songIdList.filter(song => !!song);
+				if (songIdList.length) {
+					const processArray = async idList => {
+						for (let id of idList) {
+							const result = await axios.get(`http://music.163.com/api/song/detail/?id=[${id}]&ids=[${id}]&csrf_token=`).then(res => res).catch(err => err);
+							const res = result ? result.data : null;
+							if (res && res.code === 200) {
+								const {songs: [song]} = res;
+								if (song) {
+									const {name, id, artists, album: {picUrl}} = song;
+									songList.push({
+										id,
+										author: getFinallyAuthor(artists),
+										name,
+										picUrl,
+										url: `http://music.163.com/song/media/outer/url?id=${id}.mp3`
+									})
+								}
+							}
+						}
+					};
+					await processArray(songIdList);
+				}
+			}
+		}
+		if (songList.length) {
+			response.code = 0;
+			response.message = '成功';
+			response.results = songList;
+		} else {
+			response.code = 404;
+			response.message = '信息不存在';
+		}
 		ctx.body = response;
 	}
 };

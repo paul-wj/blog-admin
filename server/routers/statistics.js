@@ -7,5 +7,6 @@ statistics
 	.get('/statistics/article', async ctx => statisticsModel.getStatisticsForArticle(ctx))
 	.get('/statistics/comment', async ctx => statisticsModel.getStatisticsForComment(ctx))
 	.get('/statistics/reply', async ctx => statisticsModel.getStatisticsForReply(ctx))
+	.get('/song', async ctx => statisticsModel.getSongList(ctx))
 ;
 module.exports = statistics;
