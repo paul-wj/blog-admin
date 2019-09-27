@@ -8,5 +8,6 @@ statistics
 	.get('/statistics/comment', async ctx => statisticsModel.getStatisticsForComment(ctx))
 	.get('/statistics/reply', async ctx => statisticsModel.getStatisticsForReply(ctx))
 	.get('/song', async ctx => statisticsModel.getSongList(ctx))
+	.get('/weather', async ctx => statisticsModel.getWeatherByCurrentCity(ctx))
 ;
 module.exports = statistics;

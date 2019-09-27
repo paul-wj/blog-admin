@@ -7,6 +7,7 @@ const Joi = require('joi');
 const createResponse = require('../utils/create-response');
 const articleSql = require('../sql/article');
 const config = require('../../config');
+const weatherCity = require('../../config/weather-city.json');
 
 const statistics = {
 	async getStatisticsForArticle(ctx) {
@@ -125,7 +126,7 @@ const statistics = {
 						author: getFinallyAuthor(ar),
 						name: name,
 						picUrl: al.picUrl,
-						url: `http://music.163.com/song/media/outer/url?id=${id}.mp3`
+						url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
 					}
 				});
 				songIdList = songIdList.filter(song => !!song);
@@ -142,8 +143,8 @@ const statistics = {
 										id,
 										author: getFinallyAuthor(artists),
 										name,
-										picUrl,
-										url: `http://music.163.com/song/media/outer/url?id=${id}.mp3`
+										picUrl: picUrl.indexOf('https') > -1 ? picUrl : `https${picUrl.substring(4, picUrl.length)}`,
+										url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
 									})
 								}
 							}
@@ -160,6 +161,27 @@ const statistics = {
 		} else {
 			response.code = 404;
 			response.message = '信息不存在';
+		}
+		ctx.body = response;
+	},
+	async getWeatherByCurrentCity(ctx) {
+		let response = createResponse();
+		const {cname} = ctx.query;
+		const {cip} = ctx.header;
+		const result = await axios.get(`http://ip.taobao.com/service/getIpInfo.php?ip=${cip}`).then(res => res).catch(err => err);
+		const res = result ? result.data : null;
+		const cityList = weatherCity.CityCode.reduce((startValue, nextValue) => startValue.concat([...nextValue.cityList].reduce((firstValue, secondValue) => firstValue.concat(secondValue.countyList), [])), []);
+		let cityCode;
+		if (res && res.code === 0) {
+			const {city} = res.data;
+			cityCode = cityList.find(item => item.name === city).code;
+		} else {
+			cityCode = cityList.find(item => item.name === cname.split('市')[0]).code;
+		}
+		const weatherResult = await axios.get(`https://apip.weatherdt.com/plugin/data?key=KbzQ7JDMhF&lang=zh&location=${cityCode}`).then(res => res).catch(err => err);
+		const weatherRes = weatherResult ? weatherResult.data : null;
+		if (weatherRes && weatherRes.status === 'ok') {
+			response.result = weatherRes;
 		}
 		ctx.body = response;
 	}
