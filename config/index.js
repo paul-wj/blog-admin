@@ -1,6 +1,6 @@
 const r = require('path').resolve;
 
-const IS_LOCAL = true;
+const IS_LOCAL = false;
 
 const config = {
 	IS_LOCAL,
