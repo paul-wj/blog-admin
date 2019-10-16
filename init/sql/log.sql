@@ -6,7 +6,7 @@ CREATE TABLE  IF NOT EXISTS `log_info` (
   `origin` varchar(50) DEFAULT NULL,
   `userAgent` varchar(50) DEFAULT NULL,
   `status` varchar(20) DEFAULT NULL,
-  `url` varchar(20) DEFAULT NULL,
+  `url` varchar(50) DEFAULT NULL,
   `method` varChar(20)  DEFAULT NULL,
   `createTime` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
