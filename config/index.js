@@ -1,18 +1,19 @@
 const r = require('path').resolve;
 
+const IS_LOCAL = false;
+
 const config = {
 	port: 9000,
 	database: {
 		DATABASE: 'own_blog',
-		USERNAME: 'paul_wang',
-		PASSWORD: 'a2UPSr1AG*kZ3kdf',
+		USERNAME: 'root',
+		PASSWORD: IS_LOCAL ? 'www5576081' : 'ufrVTJd2ONn#U%t&',
 		PORT: '3306',
-		HOST: '118.24.181.75'
+		HOST: 'localhost',
 	},
 	redis: {
-		host: '118.24.181.75',       //安装好的redis服务器地址
-		port: '6379',       //端口
-		// password: 'WjRedisPASS123'
+		host: 'localhost',
+		port: '6379',
 	},
 	databaseNameList: {
 		ARTICLE_TABLE_NAME: 'article_info',
