@@ -1,7 +1,7 @@
 {
-  "name": "node-koa2",
+  "name": "react-blog-admin",
   "version": "1.0.0",
-  "description": "self website admin",
+  "description": "this is the background system of the personal blog.",
   "main": "index.js",
   "scripts": {
     "dev": "supervisor index.js",
