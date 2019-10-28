@@ -14,7 +14,7 @@
 - [x] 登录信息2小时过期（2小时内无任何操作）
 
 ### 技术栈
-- 前端 （基于 `create-react-app eject` 后的配置）
+- 后端
 
   - koa2 + mysql
   - `joi dayjs koa2-cors koa-helmet`
