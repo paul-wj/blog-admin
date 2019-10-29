@@ -15,7 +15,7 @@ const tagCategory = {
 		return query(sqlStatement, [data.name, data.color, data.userId, currentDate, currentDate])
 	},
 	async editTag(id, data) {
-		let currentDate = new Date().toLocaleString();
+		let currentDate = formatDate(new Date());
 		return query(`update ${TAG_TABLE_NAME} set name='${data.name}', color='${data.color}', updateTime='${currentDate}' where id = ${id}`);
 	},
 	async deleteTag(id) {

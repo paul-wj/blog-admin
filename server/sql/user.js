@@ -18,7 +18,7 @@ const user = {
 		return query(`select * from ${USER_TABLE_NAME} where id=${id}`)
 	},
 	async updateUser(id, users) {
-		let updateTime = new Date().toLocaleString();
+		let updateTime = formatDate(new Date());
 		return query(`update ${USER_TABLE_NAME} set email='${users.email}', username='${users.username}', password='${users.password}', profilePicture='${users.profilePicture}', updateTime='${updateTime}' where id = ${id}`)
 	}
 };

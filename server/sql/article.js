@@ -34,7 +34,7 @@ const article = {
 		return query(sqlStatement, [data.title, data.categories, data.tagIds, content, data.userId, currentDate, currentDate])
 	},
 	async editArticle(id, data) {
-		let currentDate = new Date().toLocaleString();
+		let currentDate = formatDate(new Date());
 		let content = html_encode(data.content);
 		return query(`update ${ARTICLE_TABLE_NAME} set title='${data.title}', categories='${data.categories}', tagIds='${data.tagIds}', content='${content}', updateTime='${currentDate}' where id = ${id}`)
 	},
@@ -56,7 +56,7 @@ const article = {
 		return query(`delete ${ARTICLE_COMMENT_TABLE_NAME}, ${ARTICLE_REPLY_TABLE_NAME} from ${ARTICLE_COMMENT_TABLE_NAME} left join ${ARTICLE_REPLY_TABLE_NAME} on ${ARTICLE_COMMENT_TABLE_NAME}.id = ${ARTICLE_REPLY_TABLE_NAME}.commentId where ${ARTICLE_COMMENT_TABLE_NAME}.id = ${commentId}`)
 	},
 	async createArticleCommentReply(commentId, {type, content, userId, toUserId, replyWay, replyId}) {
-		const currentDate = new Date().toLocaleString();
+		const currentDate = formatDate(new Date());
 		let sqlStatement = `insert into ${ARTICLE_REPLY_TABLE_NAME} (commentId, replyWay, replyId, userId, toUserId, content, type, createTime) values (?, ?, ?, ?, ?, ?, ?, ?)`;
 		return query(sqlStatement, [commentId, replyWay, replyId, userId, toUserId, content, type, currentDate]);
 	},
