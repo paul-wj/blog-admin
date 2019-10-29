@@ -1,4 +1,5 @@
 const {query} = require('../utils/async-db');
+const {formatDate} = require('../utils/index');
 const databaseNameList = require('../../config/index').databaseNameList;
 const {TAG_TABLE_NAME, CATEGORY_TABLE_NAME} = databaseNameList;
 const tagCategory = {
@@ -10,7 +11,7 @@ const tagCategory = {
 	},
 	async createTag(data) {
 		let sqlStatement = `insert into ${TAG_TABLE_NAME} (name, color, userId, updateTime, createTime) values (?, ?, ?, ?, ?)`;
-		let currentDate = new Date().toLocaleString();
+		let currentDate = formatDate(new Date());
 		return query(sqlStatement, [data.name, data.color, data.userId, currentDate, currentDate])
 	},
 	async editTag(id, data) {
@@ -28,7 +29,7 @@ const tagCategory = {
 	},
 	async createCategory(data) {
 		let sqlStatement = `insert into ${CATEGORY_TABLE_NAME} (name, userId, updateTime, createTime) values (?, ?, ?, ?)`;
-		let currentDate = new Date().toLocaleString();
+		let currentDate = formatDate(new Date());
 		return query(sqlStatement, [data.name, data.userId, currentDate, currentDate])
 	},
 	async editCategory(id, data) {

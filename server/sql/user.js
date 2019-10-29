@@ -1,9 +1,10 @@
 const {query} = require('../utils/async-db');
+const {formatDate} = require('../utils/index');
 const databaseNameList = require('../../config/index').databaseNameList;
 const {USER_TABLE_NAME} = databaseNameList;
 const user = {
 	async registerUser(users) {
-		let createTime = new Date().toLocaleString();
+		let createTime = formatDate(new Date());
 		let sqlStatement = `insert into ${USER_TABLE_NAME} (email, username, password, profilePicture, createTime) values (?, ?, ?, ?, ?)`;
 		return query(sqlStatement, [users.email, users.username, users.password, users.profilePicture, createTime])
 	},

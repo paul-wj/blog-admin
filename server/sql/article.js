@@ -1,4 +1,4 @@
-const {html_encode} = require('../utils');
+const {html_encode, formatDate} = require('../utils');
 const {query} = require('../utils/async-db');
 const databaseNameList = require('../../config/index').databaseNameList;
 const {ARTICLE_TABLE_NAME, ARTICLE_COMMENT_TABLE_NAME, ARTICLE_REPLY_TABLE_NAME, USER_TABLE_NAME} = databaseNameList;
@@ -29,7 +29,7 @@ const article = {
 	},
 	async createArticle(data) {
 		let sqlStatement = `insert into ${ARTICLE_TABLE_NAME} (title, categories, tagIds, content, userId, updateTime, createTime) values (?, ?, ?, ?, ?, ?, ?)`;
-		let currentDate = new Date().toLocaleString();
+		let currentDate = formatDate(new Date());
 		let content = html_encode(data.content);
 		return query(sqlStatement, [data.title, data.categories, data.tagIds, content, data.userId, currentDate, currentDate])
 	},
@@ -43,7 +43,7 @@ const article = {
 	},
 	async createArticleComment(id, data) {
 		let sqlStatement = `insert into ${ARTICLE_COMMENT_TABLE_NAME} (articleId, userId, content, createTime) values (?, ?, ?, ?)`;
-		let currentDate = new Date().toLocaleString();
+		let currentDate = formatDate(new Date());
 		return query(sqlStatement, [id, data.userId, data.content, currentDate])
 	},
 	async getArticleCommentAllList() {
