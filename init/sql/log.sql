@@ -2,6 +2,7 @@ CREATE TABLE  IF NOT EXISTS `log_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userName` varchar(255) DEFAULT NULL,
   `userId` int(11) DEFAULT NULL,
+  `ip` varchar(50) DEFAULT NULL,
   `host` varchar(50) DEFAULT NULL,
   `origin` varchar(50) DEFAULT NULL,
   `userAgent` varchar(50) DEFAULT NULL,

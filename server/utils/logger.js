@@ -5,14 +5,17 @@ const {createLogger} = require('../sql/logger');
 module.exports = async function logger(ctx, next) {
 	const userInfo = await getTokenResult(ctx.header.authorization);
 	const {request} = ctx;
+	const {method, url, header} = request;
+	const {host, origin, cip} = header;
 	const loggerData = {
 		userName: userInfo ? userInfo.username : null,
 		userId: userInfo ? userInfo.id : null,
-		method: request.method,
-		host: request.header.host,
-		origin: request.header.origin,
+		method: method,
+		url: url,
+		host: host,
+		origin: origin,
 		userAgent: request.header['user-agent'],
-		url: request.url,
+		ip: cip,
 		status: null
 	};
 	return koaLogger((str, args) => {
