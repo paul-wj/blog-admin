@@ -40,7 +40,7 @@ const asyncDbCallback = (err, response, callback) => {
 	callback && callback();
 };
 
-const formatDate = (time, timeFormat = 'YYYY/MM/DD HH:mm:ss') => {
+const formatDate = (time, timeFormat = 'YYYY-MM-DD HH:mm:ss') => {
 	if (!time) {
 		return ''
 	}
