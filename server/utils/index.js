@@ -1,3 +1,5 @@
+const dayJs = require('dayjs');
+
 const html_encode = str => {
 	let result = '';
 	if (!str) {
@@ -38,4 +40,11 @@ const asyncDbCallback = (err, response, callback) => {
 	callback && callback();
 };
 
-module.exports = {html_encode, html_decode, asyncDbCallback};
+const formatDate = (time, timeFormat = 'YYYY/MM/DD HH:mm:ss') => {
+	if (!time) {
+		return ''
+	}
+	return dayJs(time).format(timeFormat);
+};
+
+module.exports = {html_encode, html_decode, asyncDbCallback, formatDate};
