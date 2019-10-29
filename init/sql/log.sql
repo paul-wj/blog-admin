@@ -8,6 +8,6 @@ CREATE TABLE  IF NOT EXISTS `log_info` (
   `status` varchar(20) DEFAULT NULL,
   `url` varchar(50) DEFAULT NULL,
   `method` varChar(20)  DEFAULT NULL,
-  `createTime` varchar(20) DEFAULT NULL,
+  `createTime` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
