@@ -5,7 +5,7 @@ const createResponse = require('../utils/create-response');
 const articleSql = require('../sql/article');
 const {html_decode} = require('../utils');
 const {getTokenResult} = require('../utils/check-token');
-
+const {createNotice} = require('./notice');
 const article = {
 	async getArticleAllList(ctx) {
 		let res = await articleSql.getArticleAllList();
@@ -273,8 +273,10 @@ const article = {
 	},
 	async createArticleComment(ctx) {
 		const userInfo = await getTokenResult(ctx.header.authorization);
+		const {id: userId} = userInfo;
 		const id = ctx.params.id;
 		const requestBody = ctx.request.body;
+		const {content} = requestBody;
 		let response = createResponse();
 		if (!userInfo) {
 			response.message = '请登录后评论';
@@ -284,13 +286,23 @@ const article = {
 			response.message = '当前文章不存在（id为空）';
 			return ctx.body = response
 		}
-		if (!requestBody.content) {
+		if (!content) {
 			response.message = '当前文章评论不能为空';
 			return ctx.body = response
 		}
-		let res = await articleSql.createArticleComment(id, {userId: userInfo.id, content: requestBody.content});
+		let res = await articleSql.createArticleComment(id, {userId, content});
 		if (res && res.insertId !== undefined) {
 			response.message = '成功';
+			const articleResult  = await articleSql.getArticleById(id);
+			if (articleResult && articleResult.length) {
+				const [articleDetail] = articleResult;
+				const {userId: recId, title} = articleDetail;
+				if (userId !== recId) {
+					createNotice({sendId: userId, recId, content, title, type: 10, sourceId: id});
+				}
+			} else {
+				console.log(`id:${id}, 当前文章不存在，发送评论通知失败`)
+			}
 		}
 		ctx.body = response;
 	},
@@ -312,7 +324,7 @@ const article = {
 		const userInfo = await getTokenResult(ctx.header.authorization);
 		const commentId = ctx.params.id;
 		const userId = userInfo.id;
-		const {type, content, toUserId, replyWay, replyId} = ctx.request.body;
+		const {articleId, type, content, toUserId, replyWay, replyId} = ctx.request.body;
 		//回复方式为10时replyId为commentId，回复方式为20时replyId为replyId
 		const requestBody = {commentId, type, content, toUserId, userId, replyWay, replyId: replyWay === 10 ? commentId : replyId};
 		const validator = Joi.validate(requestBody, ArticleSchema.createArticleCommentReply);
@@ -333,6 +345,16 @@ const article = {
 		}
 		if (res && res.insertId !== undefined) {
 			response.message = '成功';
+			const articleResult  = await articleSql.getArticleById(articleId);
+			if (articleResult && articleResult.length) {
+				const [articleDetail] = articleResult;
+				const {title} = articleDetail;
+				if (userId !== toUserId) {
+					createNotice({sendId: userId, recId: toUserId, content, title, type: type === 10 ? 30 : type === 30 ?  20 : 40, sourceId: articleId});
+				}
+			} else {
+				console.log(`id:${articleId}, 当前文章不存在，发送回复通知失败`)
+			}
 		}
 		ctx.body = response;
 	},
