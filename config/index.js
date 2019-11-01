@@ -25,7 +25,10 @@ const config = {
 		TAG_TABLE_NAME: 'tag_info',
 		CATEGORY_TABLE_NAME: 'category_info',
 		RECIPE_TABLE_NAME: 'recipe',
-		RECIPE_DATE_TABLE_NAME: 'recipe_date'
+		RECIPE_DATE_TABLE_NAME: 'recipe_date',
+		MESSAGE: 'message',
+		MESSAGE_CONTENT: 'message_content',
+		MESSAGE_USER: 'message_user'
 	},
 	BASE_PATH: r(__dirname, '../'),
 	STATIC_PATH: r(__dirname, '../static'),
