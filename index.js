@@ -1,11 +1,11 @@
 // require('./init');
+const {startWebSocketApp} = require('./server/utils/web-socket');
 const Koa = require('koa');
 const helmet = require('koa-helmet');
 const koaBody = require('koa-body');
 const bodyParser = require('koa-bodyparser');
 const koaStatic = require('koa-static');
 const compress = require('koa-compress');
-
 const logger = require('./server/utils/logger');
 const cors = require('./server/utils/set-cors');
 const {checkToken} = require('./server/utils/check-token');
@@ -13,6 +13,11 @@ const errorHandle  = require('./server/utils/errorHandle');
 const config = require('./config');
 const router = require('./server/routers/index');
 const app = new Koa();
+const server = require('http').Server(app.callback());
+
+//启动webSocket
+startWebSocketApp(server);
+
 
 
 app.use(compress({
@@ -49,5 +54,8 @@ app.use(checkToken).use(errorHandle);
 // 配置控制台日志中间件
 app.use(logger);
 app.use(router.routes()).use(router.allowedMethods());
-app.listen(config.port);
-console.log(`starting at port:${config.port}`);
+server.listen(config.port, () => {
+	console.log(`starting at port:${config.port}`);
+});
+
+
