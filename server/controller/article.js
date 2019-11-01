@@ -297,9 +297,10 @@ const article = {
 			if (articleResult && articleResult.length) {
 				const [articleDetail] = articleResult;
 				const {userId: recId, title} = articleDetail;
-				if (userId !== recId) {
-					createNotice({sendId: userId, recId, content, title, type: 10, sourceId: id});
-				}
+				// if (userId !== recId) {
+				//
+				// }
+				createNotice({sendId: userId, recId, content, title, type: 10, sourceId: id});
 			} else {
 				console.log(`id:${id}, 当前文章不存在，发送评论通知失败`)
 			}
