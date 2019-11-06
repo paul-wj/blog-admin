@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const noticeModel = require('../controller/notice');
-let notice = new Router();
+const notice = new Router();
 
 notice
 	.get('/message-un-read', async ctx => noticeModel.getUnreadMessageList(ctx))

@@ -3,6 +3,7 @@ const roomPrefix = 'user_';
 const webSocketObj = {
 	noticeRooms: {},
 	webSocketIo: null,
+	//向指定用户发送消息
 	sendNotice(userId, data) {
 		const {noticeRooms, webSocketIo} = this;
 		const keys = Object.keys(noticeRooms);
@@ -10,11 +11,14 @@ const webSocketObj = {
 			return
 		}
 		const sockets = webSocketIo.sockets.sockets;
+		//通过当前用户userId获取当前用户room
 		const currentSocket = sockets[noticeRooms[`${roomPrefix}${userId}`]];
 		if (currentSocket) {
+			//向当前用户room发送通知
 			currentSocket.emit('getNotice', data);
 		}
 	},
+	//发送全局系统消息
 	sendSystemNotice(data) {
 		const {noticeRooms, webSocketIo} = this;
 		const keys = Object.keys(noticeRooms);
@@ -40,6 +44,7 @@ const startWebSocketApp = server => {
 		console.log('初始化成功！下面可以用socket绑定事件和触发事件了');
 		socket.on(`joinNoticeRoom`, data => {
 			console.log('加入房间：', data);
+			//根据当前用户id记录当前room id
 			noticeRooms[`user_${data}`] = socket.id;
 		});
 	});

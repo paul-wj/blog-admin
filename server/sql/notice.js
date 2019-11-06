@@ -30,7 +30,7 @@ const notice = {
 		SELECT
 			NOTICE_CONTENT.*,
 			USER.profilePicture,
-           USER.username sendName	
+			USER.username sendName
 		FROM
 			(
 			SELECT
