@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "supervisor index.js",
-    "server": "node index.js",
+    "server": "pm2 start ./pm2.config.js",
     "init sql": "node ./init/index.js"
   },
   "author": "paul",
