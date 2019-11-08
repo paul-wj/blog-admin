@@ -42,6 +42,106 @@
    └─
 ```
 
+## 表结构
+
+### 文章表
+```
+CREATE TABLE  IF NOT EXISTS `article_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `categories` varchar(255) DEFAULT NULL,
+  `tagIds` varchar(255) DEFAULT NULL,
+  `userId` int(11) DEFAULT 1,
+  `createTime` varchar(50) DEFAULT NULL,
+  `updateTime` varchar(50) DEFAULT NULL,
+  `content` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 文章评论表
+```
+CREATE TABLE  IF NOT EXISTS `article_comment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `articleId` int(11) DEFAULT NULL COMMENT '文章Id',
+  `userId` int(11) DEFAULT NULL COMMENT '评论人',
+  `content` longtext DEFAULT NULL COMMENT '评论内容',
+  `createTime` varchar(50) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 文章评论回复表
+```
+CREATE TABLE  IF NOT EXISTS `article_reply` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+  `commentId` int(11) NULL DEFAULT NULL COMMENT '文章评论id',
+  `replyWay` int(11) NULL DEFAULT NULL COMMENT '回复方式（10: 回复他人评论， 20：回复别人的回复）',
+  `replyId` int(11) NULL DEFAULT NULL COMMENT '回复目标id（replyWay为10时为commentId，replyWay为20时为replyId）',
+  `userId` int(11) NULL DEFAULT NULL COMMENT '评论用户id',
+  `toUserId` int(11) NULL DEFAULT NULL COMMENT '回复用户id',
+  `content` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '回复内容',
+  `type` int(11) NULL DEFAULT NULL COMMENT '回复类型（10：点赞，20：踩,  30: 文字回复）',
+  `createTime` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 目录表
+```
+CREATE TABLE  IF NOT EXISTS `category_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `userId` int(11) DEFAULT 1,
+  `updateTime` varchar(50) DEFAULT NULL,
+  `createTime` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 标签
+```
+CREATE TABLE  IF NOT EXISTS `tag_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `userId` int(11) DEFAULT 1,
+  `color` varchar(20) DEFAULT NULL,
+  `updateTime` varchar(50) DEFAULT NULL,
+  `createTime` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 收发关系表
+```
+CREATE TABLE  IF NOT EXISTS `message` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sendId` int(11) DEFAULT NULL COMMENT '发送人id',
+  `recId` int(11) DEFAULT NULL COMMENT '接收人id（recId为0时为全部用户）',
+  `messageId` int(11) DEFAULT NULL COMMENT 'message内容id',
+  `createDate` varchar(50) DEFAULT NULL COMMENT '发送日期',
+   PRIMARY KEY (`id`)
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 发送消息表
+```
+CREATE TABLE  IF NOT EXISTS `message_content` (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` int(11) NULL DEFAULT NULL COMMENT '10: 文章评论 20：文章评论回复（业务可扩展）',
+  `title` varchar(255) DEFAULT NULL COMMENT '评论主题',
+  `sourceId` int(11) NULL DEFAULT NULL COMMENT '评论源id',
+  `content` longtext DEFAULT NULL COMMENT '内容',
+  `createDate` varchar(50) DEFAULT NULL COMMENT '发送日期',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### 用户消息关系表
+```
+CREATE TABLE  IF NOT EXISTS `message_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) DEFAULT NULL COMMENT '用户id',
+  `messageId` int(11) DEFAULT NULL COMMENT '信息id',
+  `status` int(11) NULL DEFAULT 10 COMMENT '（10：已阅读）',
+  `createDate` varchar(50) DEFAULT NULL COMMENT '阅读日期',
+   PRIMARY KEY (`id`)
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
 ## 使用这个项目
 ```bash
 git https://github.com/wj5576081/blog-amdin.git
