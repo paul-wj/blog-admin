@@ -3,6 +3,7 @@ const fnv = require('fnv-plus');
 const jwt = require('jsonwebtoken');
 const redis = require('../utils/redis');
 const config = require('../../config');
+const redisPrefix = 'user_';
 const whiteList = [
 	{url: '/user', method: 'post'},
 	{url: '/login', method: 'post'},
@@ -14,10 +15,10 @@ const createToken = (contentOptions) => {
 	if (!contentOptions) {
 		return
 	}
-	let privateKey = fs.readFileSync(config.PRIVATE_KEY);
+	const privateKey = fs.readFileSync(config.PRIVATE_KEY);
 	const {id} = contentOptions;
 	const jwtToken = jwt.sign(contentOptions, privateKey, {expiresIn: jwtExpiresIn, algorithm: 'RS256'});
-	redis.set(`user_${id}`, jwtToken, 'EX', expiresIn);
+	redis.set(`${redisPrefix}${id}`, jwtToken, 'EX', expiresIn);
 	return jwtToken;
 };
 
@@ -32,11 +33,11 @@ const verifyToken = async token => {
 			console.log({err});
 			result = null;
 		} else {
-			await redis.get(`user_${decode.id}`, function (err, res) {
+			await redis.get(`${redisPrefix}${decode.id}`, function (err, res) {
 				result = res !== null || !!err;
 			});
 			if (result) {
-				await redis.expire(`user_${decode.id}`, expiresIn)
+				await redis.expire(`${redisPrefix}${decode.id}`, expiresIn)
 			}
 		}
 	});
@@ -51,10 +52,10 @@ const getTokenResult = async token => {
 	const cert = fs.readFileSync(config.PUBLIC_KEY);
 	await jwt.verify(token, cert, async (err, decode) => {
 		if (err) {
-			console.log({err}, 21312);
+			console.log('jwtError:',{err});
 			result = null;
 		} else {
-			await redis.get(`user_${decode.id}`, function (err, res) {
+			await redis.get(`${redisPrefix}${decode.id}`, function (err, res) {
 				result = res !== null || !!err;
 			});
 			result = result ? decode : null;
@@ -65,7 +66,7 @@ const getTokenResult = async token => {
 
 const checkToken = async (ctx, next) => {
 	const authorization = ctx.header.authorization;
-	let url = ctx.url.split('?')[0];
+	const url = ctx.url.split('?')[0];
 	//whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))
 	//get请求和options请求直接通过
 	if (['OPTIONS', 'GET'].includes(ctx.method) || whiteList.some(router => url === router.url && [router.method.toUpperCase(), 'OPTIONS'].includes(ctx.method))) {
@@ -74,7 +75,7 @@ const checkToken = async (ctx, next) => {
 		}
 		return next();
 	}
-	let hasToken = await verifyToken(authorization);
+	const hasToken = await verifyToken(authorization);
 	return hasToken === true ? next() : ctx.body = {
 		code: 900,
 		message: authorization ? '登录状态已失效，请重新登录' : '请登录后进行当前操作',
