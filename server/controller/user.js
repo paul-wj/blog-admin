@@ -33,9 +33,13 @@ const user = {
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
 		}
-		const findUser = await userSql.queryUseExists({email, password});
+		const findEmail = await userSql.queryUseExists({account: email, password});
+		if (findEmail && findEmail.length > 0) {
+			return ctx.body = {code: 400, message: '当前邮箱已被注册'}
+		}
+		const findUser = await userSql.queryUseExists({account: username, password});
 		if (findUser && findUser.length > 0) {
-			return ctx.body = {code: 400, message: '当前用户已注册'}
+			return ctx.body = {code: 400, message: '当前用户名已被注册'}
 		}
 		let res = await userSql.registerUser({email, username, password, profilePicture});
 		if (res && res.insertId !== undefined) {
@@ -77,7 +81,7 @@ const user = {
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
 		}
-		const findUser = await userSql.queryUseExists(oldPassword ? {email, password: oldPassword} : {email, password});
+		const findUser = await userSql.queryUseExists(oldPassword ? {account: email, password: oldPassword} : {email, password});
 		let findUserInfo;
 		if (findUser && findUser.length > 0) {
 			findUserInfo = findUser[0];
@@ -109,7 +113,7 @@ const user = {
 			response.message = '成功'
 		} else {
 			response.code = 900;
-			response.message = '登录信息不存在!'
+			response.message = '登录状态已失效，请重新登录!'
 		}
 		ctx.body = response;
 	},
