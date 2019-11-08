@@ -47,6 +47,11 @@ const startWebSocketApp = server => {
 			//根据当前用户id记录当前room id
 			noticeRooms[`user_${data}`] = socket.id;
 		});
+		socket.on('disconnect', () => {
+			const currentRoomKey = Object.keys(noticeRooms).find(key => noticeRooms[key] === socket.id);
+			const [, roomId] = currentRoomKey.split('_');
+			console.log(`房间${roomId}断开连接`);
+		});
 	});
 };
 
