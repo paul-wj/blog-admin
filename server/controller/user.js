@@ -8,12 +8,12 @@ const user = {
 	async login(ctx) {
 		const requestBody = ctx.request.body;
 		const response = createResponse();
-		const {email, password} = requestBody;
+		const {account, password} = requestBody;
 		const validator = Joi.validate(requestBody, UserSchema.login);
 		if (validator.error) {
 			return ctx.body = {code: 400, message: validator.error.message}
 		}
-		let res = await userSql.queryUseExists({email, password});
+		let res = await userSql.queryUseExists({account, password});
 		if (res && res.length) {
 			response.message = '成功';
 			const userInfo = res[0];

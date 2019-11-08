@@ -9,7 +9,7 @@ const user = {
 		return query(sqlStatement, [users.email, users.username, users.password, users.profilePicture, createTime])
 	},
 	async queryUseExists(users) {
-		return query(`select * from ${USER_TABLE_NAME} where BINARY email='${users.email}' and password='${users.password}'`)
+		return query(`select * from ${USER_TABLE_NAME} where BINARY (username='${users.account}' or email='${users.account}') and password='${users.password}'`)
 	},
 	async getUserList(params) {
 		return query(`select * from ${USER_TABLE_NAME} where name like '%${params.name}%' limit ${params.limit} offset ${params.offset}`)

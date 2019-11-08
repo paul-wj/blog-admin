@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const login = Joi.object().keys({
-	email: Joi.string().required().error(new Error('邮箱或密码不能为空')),
-	password: Joi.string().required().error(new Error('邮箱或密码不能为空'))
+	account: Joi.string().required().error(new Error('账号或密码不能为空')),
+	password: Joi.string().required().error(new Error('账号或密码不能为空'))
 });
 const registerUser = Joi.object().keys({
 	email: Joi.string().required().error(new Error('邮箱不能为空')).email().error(new Error('邮箱格式不正确')),
