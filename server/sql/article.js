@@ -41,6 +41,9 @@ const article = {
 	async deleteArticle(id) {
 		return query(`delete ${ARTICLE_TABLE_NAME}, ${ARTICLE_COMMENT_TABLE_NAME} from ${ARTICLE_TABLE_NAME} left join ${ARTICLE_COMMENT_TABLE_NAME} on ${ARTICLE_TABLE_NAME}.id = ${ARTICLE_COMMENT_TABLE_NAME}.articleId where ${ARTICLE_TABLE_NAME}.id = ${id}`)
 	},
+	async updateArticleViewCountById(id, viewCount) {
+		return query(`update ${ARTICLE_TABLE_NAME} set viewCount='${viewCount}' where id = ${id}`)
+	},
 	async createArticleComment(id, data) {
 		let sqlStatement = `insert into ${ARTICLE_COMMENT_TABLE_NAME} (articleId, userId, content, createTime) values (?, ?, ?, ?)`;
 		let currentDate = formatDate(new Date());

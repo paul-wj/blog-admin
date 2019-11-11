@@ -91,6 +91,8 @@ const article = {
 				content: html_decode(result.content),
 				tagIds: result.tagIds.split(',').map(item => item - 0),
 				categories: result.categories.split(',').map(item => item - 0)});
+			let {viewCount} = result;
+			!isNaN(viewCount) && await articleSql.updateArticleViewCountById(id, ++viewCount)
 		} else {
 			response.code = 404;
 			response.message = '信息不存在';
