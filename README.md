@@ -16,7 +16,7 @@
 ### 技术栈
 - 后端
 
-  - koa2 + mysql
+  - koa2 + mysql + ioredis
   - `joi dayjs koa2-cors koa-helmet`
 
 ## 博客预览
