@@ -1,3 +1,4 @@
+const {formatDate} = require('./index');
 const roomPrefix = 'user_';
 
 const webSocketObj = {
@@ -41,16 +42,20 @@ const startWebSocketApp = server => {
 	const {noticeRooms} = webSocketObj;
 	//webSocket监听方法
 	webSocketIo.on('connection', socket => {
-		console.log('初始化成功！下面可以用socket绑定事件和触发事件了');
+		console.log('初始化成功！下面可以用socket绑定事件和触发事件了', formatDate(new Date()));
 		socket.on(`joinNoticeRoom`, data => {
-			console.log('加入房间：', data);
+			console.log('加入房间：', data, formatDate(new Date()));
 			//根据当前用户id记录当前room id
 			noticeRooms[`user_${data}`] = socket.id;
 		});
 		socket.on('disconnect', () => {
 			const currentRoomKey = Object.keys(noticeRooms).find(key => noticeRooms[key] === socket.id);
-			const [, roomId] = currentRoomKey.split('_');
-			console.log(`房间${roomId}断开连接`);
+			if (typeof currentRoomKey === "string") {
+				const [, roomId] = currentRoomKey.split('_');
+				console.log(`房间${roomId}断开连接`, formatDate(new Date()));
+			} else {
+				console.log(`房间断开连接`, formatDate(new Date()));
+			}
 		});
 	});
 };
