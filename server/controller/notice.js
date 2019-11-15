@@ -34,12 +34,17 @@ const notice = {
 		const userInfo = await getTokenResult(authorization);
 		const {id} = userInfo;
 		const response = createResponse();
-		const unreadMessageList = await noticeSql.getUnreadMessageList(id);
-		if (unreadMessageList && unreadMessageList.length) {
-			response.code = 0;
-			response.message = '成功';
-			response.results = unreadMessageList;
-		}else {
+		if (id) {
+			const unreadMessageList = await noticeSql.getUnreadMessageList(id);
+			if (unreadMessageList && unreadMessageList.length) {
+				response.code = 0;
+				response.message = '成功';
+				response.results = unreadMessageList;
+			}else {
+				response.code = 404;
+				response.message = '信息不存在';
+			}
+		} else {
 			response.code = 404;
 			response.message = '信息不存在';
 		}
