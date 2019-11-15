@@ -144,7 +144,7 @@ CREATE TABLE  IF NOT EXISTS `message_user` (
 
 ## 使用这个项目
 ```bash
-git https://github.com/wj5576081/blog-amdin.git
+git https://github.com/paul-wj/blog-amdin.git
 
 ## 安装依赖以及开启开发模式
 cd blog-amdin
