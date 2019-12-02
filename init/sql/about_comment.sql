@@ -1,4 +1,4 @@
-CREATE TABLE  IF NOT EXISTS `user_comment` (
+CREATE TABLE  IF NOT EXISTS `about_comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) DEFAULT NULL COMMENT '评论人',
   `content` longtext DEFAULT NULL COMMENT '评论内容',
