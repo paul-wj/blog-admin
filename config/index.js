@@ -28,7 +28,9 @@ const config = {
 		RECIPE_DATE_TABLE_NAME: 'recipe_date',
 		MESSAGE: 'message',
 		MESSAGE_CONTENT: 'message_content',
-		MESSAGE_USER: 'message_user'
+		MESSAGE_USER: 'message_user',
+		ABOUT_COMMENT_TABLE_NAME: 'about_comment',
+		ABOUT_REPLY_TABLE_NAME: 'about_reply',
 	},
 	BASE_PATH: r(__dirname, '../'),
 	STATIC_PATH: r(__dirname, '../static'),
