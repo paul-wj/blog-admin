@@ -32,7 +32,7 @@ const notice = {
 	async getUnreadMessageList(ctx) {
 		const authorization = ctx.header.authorization;
 		const userInfo = await getTokenResult(authorization);
-		const {id} = userInfo;
+		const {id} = userInfo || {id: null};
 		const response = createResponse();
 		if (id) {
 			const unreadMessageList = await noticeSql.getUnreadMessageList(id);
