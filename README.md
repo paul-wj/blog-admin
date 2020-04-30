@@ -45,7 +45,7 @@
    ├─types              // 数据类型
    ├─router             // 路由目录
    ├─lib                // 工具方法目录
-   ├─server.js          // 启动文件
+   ├─server.ts          // 启动文件
    └─lib
        ├─schemas        // 校验目录
        ├─utils          // 工具目录
