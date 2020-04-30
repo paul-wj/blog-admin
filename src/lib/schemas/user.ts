@@ -9,7 +9,7 @@ const loginSchemaObj: SchemaObject<LoginRequestParams> = {
 export const loginSchema = Joi.object().keys(loginSchemaObj);
 
 const userListSchemaObj: SchemaObject<UserListRequestBody> = {
-    name: Joi.string().description('用户名'),
+    name: Joi.string().description('用户名').allow(''),
     limit: Joi.number().description('一页显示记录数').required().error(new Error('limit不能为空')),
     offset: Joi.number().description('偏移量即起始记录下标').required().error(new Error('offset不能为空'))
 };

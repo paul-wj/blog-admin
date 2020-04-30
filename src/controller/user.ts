@@ -23,6 +23,8 @@ import {
     responses,
     header
 } from 'koa-swagger-decorator/dist';
+import {CreateCommentRequestBody} from "../types/article";
+import {createCommentReplySchema} from "../lib/schemas/article";
 
 const loginResponses: SuccessResponses<SingleUserInfo & IJwtToken> = {
     200: {
@@ -203,6 +205,11 @@ export default class User extends JoiSchemaToSwaggerSchema {
     static async getUserList(ctx: Context): Promise<void> {
         const {name, limit, offset} = ctx.request.query;
         let response = {} as ServerResponse<PageListResponse<SingleUserInfo>>;
+        const validator: ValidationResult<UserListRequestBody> = Joi.validate({name, limit, offset}, userListSchema);
+        if (validator.error) {
+            ctx.body = response = {code: 400, message: validator.error.message, result: null};
+            return
+        }
         const queryResult: SqlPageListResponse<UserInfo> = await UserStatement.queryUserList({name, limit, offset});
         if (queryResult && queryResult.length) {
             const [userList, [{total}]] = queryResult;
