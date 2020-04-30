@@ -18,7 +18,7 @@ export interface UserInfo {
 
 export type SingleUserInfo = Omit<UserInfo, 'password'>;
 
-export interface UserListRequestBody extends RequestPageBody{
+export interface UserListRequestBody extends RequestPageBody {
     name: string;
 }
 

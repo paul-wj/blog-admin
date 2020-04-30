@@ -1,6 +1,15 @@
 import {query, formatDate} from '../utils';
 import {databaseMap, DatabaseMap} from "../../conf";
-import {ArticleInfo, ArticlePageListRequestBody, CommentUserInfo, CreateArticleRequestBody, CommentReplyInfo, CreateCommentRequestBody, CreateArticleCommentReplyRequestBody, CommentReplyBaseInfo} from "../../types/article";
+import {
+    ArticleInfo,
+    ArticlePageListRequestBody,
+    CommentUserInfo,
+    CreateArticleRequestBody,
+    CommentReplyInfo,
+    CreateCommentRequestBody,
+    CreateArticleCommentReplyRequestBody,
+    CommentReplyBaseInfo
+} from "../../types/article";
 import {RequestPageBody} from "../../types/request";
 import {html_encode} from "../utils";
 import {SqlPageListResponse} from "../../types/response";
@@ -67,7 +76,7 @@ export default class ArticleStatement {
         return query<CommentReplyInfo[]>(`select reply.*, user.username userName, user.profilePicture userProfilePicture, toUser.username toUserName from ${ARTICLE_REPLY_TABLE_NAME} reply left join ${USER_TABLE_NAME} user ON reply.userId = user.id left join ${USER_TABLE_NAME} toUser on reply.toUserId = toUser.id where reply.commentId=${commentId}`)
     }
 
-    static async createArticleComment(id: number, data: CreateCommentRequestBody & {userId: number}) {
+    static async createArticleComment(id: number, data: CreateCommentRequestBody & { userId: number }) {
         const sqlStatement = `insert into ${ARTICLE_COMMENT_TABLE_NAME} (articleId, userId, content, createTime) values (?, ?, ?, ?)`;
         const currentDate = formatDate(new Date());
         return query<OkPacket>(sqlStatement, [id, data.userId, data.content, currentDate]);

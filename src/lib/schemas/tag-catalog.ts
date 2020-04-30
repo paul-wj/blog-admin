@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import { SchemaObject } from '../../types/schema';
-import { TagRequestBody, CatalogRequestBody } from "../../types/tag-catalog";
+import {SchemaObject} from '../../types/schema';
+import {TagRequestBody, CatalogRequestBody} from "../../types/tag-catalog";
 
 const createTagSchemaObj: SchemaObject<TagRequestBody> = {
     name: Joi.string().description('标签名').required().error(new Error('标签名不能为空')),

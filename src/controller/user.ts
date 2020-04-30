@@ -1,11 +1,17 @@
 import Joi, {number, ValidationResult} from 'joi';
-import { Context } from "koa";
-import { OkPacket } from 'mysql';
-import { JoiSchemaToSwaggerSchema } from '../lib/utils';
-import { ServerResponse, SuccessResponses, SqlPageListResponse, PageListResponse, ServerSuccessResponsePageList } from '../types/response';
-import { LoginRequestParams, UserInfo, SingleUserInfo, UserListRequestBody } from "../types/user";
-import { IJwtToken, getJwtToken, removeJwtToken } from '../middleware/verify-token';
-import { registerUserSchema, loginSchema, userListSchema, updateUserSchema } from '../lib/schemas/user';
+import {Context} from "koa";
+import {OkPacket} from 'mysql';
+import {JoiSchemaToSwaggerSchema} from '../lib/utils';
+import {
+    ServerResponse,
+    SuccessResponses,
+    SqlPageListResponse,
+    PageListResponse,
+    ServerSuccessResponsePageList
+} from '../types/response';
+import {LoginRequestParams, UserInfo, SingleUserInfo, UserListRequestBody} from "../types/user";
+import {IJwtToken, getJwtToken, removeJwtToken} from '../middleware/verify-token';
+import {registerUserSchema, loginSchema, userListSchema, updateUserSchema} from '../lib/schemas/user';
 import UserStatement from '../lib/statement/user';
 import {
     request,
@@ -80,14 +86,14 @@ const userListResponse: ServerSuccessResponsePageList<SingleUserInfo> = {
 };
 
 @tagsAll(["系统用户API接口"])
-export default class User extends JoiSchemaToSwaggerSchema{
+export default class User extends JoiSchemaToSwaggerSchema {
     @request('post', '/user')
     @summary('用户注册')
     @body({...User.parseToSwaggerSchema(registerUserSchema)})
     @responses({...User.defaultServerResponse})
     static async registerUser(ctx: Context): Promise<void> {
         const {email, username, password, profilePicture} = ctx.request.body;
-        let response = {} as ServerResponse<{items: SingleUserInfo[], total: number}>;
+        let response = {} as ServerResponse<{ items: SingleUserInfo[], total: number }>;
         const validator = Joi.validate({email, username, password, profilePicture}, registerUserSchema);
         if (validator.error) {
             ctx.body = response = {code: 400, message: validator.error.message, result: null};
@@ -130,9 +136,12 @@ export default class User extends JoiSchemaToSwaggerSchema{
             return
         }
         const {email, username, password, oldPassword, profilePicture} = body;
-        const currentUserById: UserInfo[] = await UserStatement.queryUseExists(oldPassword ? {account: email, password: oldPassword} : {account: username, password});
+        const currentUserById: UserInfo[] = await UserStatement.queryUseExists(oldPassword ? {
+            account: email,
+            password: oldPassword
+        } : {account: username, password});
         if (!(currentUserById && currentUserById.length)) {
-            ctx.body = response = {code: 400, message:  `${oldPassword ? '原' : ''}密码错误`, result: null};
+            ctx.body = response = {code: 400, message: `${oldPassword ? '原' : ''}密码错误`, result: null};
             return
         }
         let updateUserRes: OkPacket = await UserStatement.updateUser(id, {email, username, password, profilePicture});
@@ -192,9 +201,9 @@ export default class User extends JoiSchemaToSwaggerSchema{
     @query({...User.parseToSwaggerSchema(userListSchema)})
     @responses({...User.defaultServerResponse, ...userListResponse})
     static async getUserList(ctx: Context): Promise<void> {
-        const { name, limit, offset } = ctx.request.query;
+        const {name, limit, offset} = ctx.request.query;
         let response = {} as ServerResponse<PageListResponse<SingleUserInfo>>;
-        const queryResult: SqlPageListResponse<UserInfo> = await UserStatement.queryUserList({ name, limit, offset });
+        const queryResult: SqlPageListResponse<UserInfo> = await UserStatement.queryUserList({name, limit, offset});
         if (queryResult && queryResult.length) {
             const [userList, [{total}]] = queryResult;
             response = {

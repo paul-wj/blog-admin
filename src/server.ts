@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import koaCompress  from 'koa-compress';
+import koaCompress from 'koa-compress';
 import zlib from 'zlib';
 import koaStatic from 'koa-static';
 import koaHelmet from 'koa-helmet';
@@ -7,7 +7,7 @@ import koaBody from 'koa-body';
 import koaBodyParser from 'koa-bodyparser';
 import koaCors from 'koa2-cors';
 import koaLogger from 'koa-logger';
-import { checkTokenMiddleware } from './middleware/verify-token';
+import {checkTokenMiddleware} from './middleware/verify-token';
 import router from './router';
 import {
     staticPathConfig,

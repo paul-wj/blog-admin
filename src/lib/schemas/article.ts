@@ -1,7 +1,12 @@
 import Joi from 'joi';
-import {ArticlePageListRequestBody, CreateArticleRequestBody, CreateCommentRequestBody, CreateArticleCommentReplyRequestBody} from "../../types/article";
+import {
+    ArticlePageListRequestBody,
+    CreateArticleRequestBody,
+    CreateCommentRequestBody,
+    CreateArticleCommentReplyRequestBody
+} from "../../types/article";
 import {RequestPageBody} from "../../types/request";
-import { SchemaObject } from '../../types/schema';
+import {SchemaObject} from '../../types/schema';
 
 const articlePageListSchemaObj: SchemaObject<ArticlePageListRequestBody> = {
     title: Joi.string().description('文章标题'),
@@ -25,7 +30,7 @@ const createArticleSchemaObj: SchemaObject<CreateArticleRequestBody> = {
 };
 export const createArticleSchema = Joi.object().keys(createArticleSchemaObj);
 
-const createCommentReplySchemaObj: SchemaObject<CreateCommentRequestBody>= {
+const createCommentReplySchemaObj: SchemaObject<CreateCommentRequestBody> = {
     content: Joi.string().description('评论内容').required().error(new Error('评论内容不能为空')),
 };
 export const createCommentReplySchema = Joi.object().keys(createCommentReplySchemaObj);
@@ -33,7 +38,10 @@ export const createCommentReplySchema = Joi.object().keys(createCommentReplySche
 const createArticleCommentReplySchemaObj: SchemaObject<CreateArticleCommentReplyRequestBody> = {
     commentId: Joi.string().description('评论id').required().error(new Error('commentId不能为空')),
     replyWay: Joi.number().description('回复方式').required().error(new Error('回复方式不能为空')),
-    replyId: Joi.description('回复id').when('replyWay', {is: 20, then: Joi.number().required().error(new Error('回复id不能为空'))}),
+    replyId: Joi.description('回复id').when('replyWay', {
+        is: 20,
+        then: Joi.number().required().error(new Error('回复id不能为空'))
+    }),
     type: Joi.number().description('回复类型').required().error(new Error('回复类型不能为空')),
     userId: Joi.number().description('用户id').required(),
     toUserId: Joi.number().description('回复用户id').required().error(new Error('回复用户id不能为空')),

@@ -13,7 +13,7 @@ export interface ArticleInfo {
     createTime: string
 }
 
-export interface CommentUserInfo{
+export interface CommentUserInfo {
     id: number;
     articleId: number;
     userId: number;
@@ -23,7 +23,7 @@ export interface CommentUserInfo{
     userProfilePicture: string;
 }
 
-export interface ArticlePageListRequestBody extends RequestPageBody{
+export interface ArticlePageListRequestBody extends RequestPageBody {
     title: string;
 }
 
@@ -49,13 +49,13 @@ export interface CommentReplyBaseInfo {
     toUserName: string;
 }
 
-export interface CommentReplyInfo extends CommentReplyBaseInfo{
+export interface CommentReplyInfo extends CommentReplyBaseInfo {
     isReply?: boolean;
     likes: number;
     dislikes: number;
 }
 
-export interface CommentAndReplyInfo extends CommentUserInfo{
+export interface CommentAndReplyInfo extends CommentUserInfo {
     reply: {
         likes: number;
         dislikes: number;

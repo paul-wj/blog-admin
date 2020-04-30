@@ -1,11 +1,12 @@
 import {Schema, Description, ValidationOptions} from 'joi';
-import { ISwaggerSchema } from "../../types/schema";
-import { defaultServerResponse } from '../../types/response';
-import { defaultHeaders } from '../../types/schema';
+import {ISwaggerSchema} from "../../types/schema";
+import {defaultServerResponse} from '../../types/response';
+import {defaultHeaders} from '../../types/schema';
 
 export class JoiSchemaToSwaggerSchema {
     static readonly defaultHeaders = defaultHeaders;
     static readonly defaultServerResponse = defaultServerResponse;
+
     static parseToSwaggerSchema(joiSchema?: Schema): ISwaggerSchema {
         const swaggerSchema: ISwaggerSchema = {};
         const joiDescription: Description = joiSchema.describe();

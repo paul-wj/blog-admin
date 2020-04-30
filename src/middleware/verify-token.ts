@@ -1,5 +1,5 @@
 import fs from 'fs';
-import jwt, { VerifyErrors } from 'jsonwebtoken';
+import jwt, {VerifyErrors} from 'jsonwebtoken';
 import Redis from 'ioredis';
 import {redisConfig, staticPathConfig, jwtConfig, IUnlessPath} from "../conf";
 import {Context, Next} from 'koa';
@@ -35,8 +35,8 @@ export interface ITokenResult<T = null> {
     errorStatus: IJwtErrorStatus;
 }
 
-export const createJwtSingleToken = (userInfo: Partial<UserInfo & {isRefresh: boolean}>, expiresInParams: number = expiresIn): string => {
-    return jwt.sign({...userInfo}, privateKey, { expiresIn: expiresInParams, algorithm: 'RS256' });
+export const createJwtSingleToken = (userInfo: Partial<UserInfo & { isRefresh: boolean }>, expiresInParams: number = expiresIn): string => {
+    return jwt.sign({...userInfo}, privateKey, {expiresIn: expiresInParams, algorithm: 'RS256'});
 };
 
 export const getJwtToken = (userInfo: UserInfo): IJwtToken => {
@@ -76,7 +76,7 @@ export const getTokenResult = (token: string): ITokenResult<UserInfo> => {
 
 const createNewToken = (ctx: Context, data: Partial<UserInfo>, refreshToken: string): void => {
     const newToken = createJwtSingleToken(data);
-    ctx.res.setHeader('Access-Control-Expose-Headers','authorization');
+    ctx.res.setHeader('Access-Control-Expose-Headers', 'authorization');
     ctx.res.setHeader('authorization', newToken);
     redis.set(refreshToken, newToken);
 };

@@ -1,5 +1,5 @@
 import {query, formatDate} from '../utils';
-import { databaseMap, DatabaseMap } from "../../conf";
+import {databaseMap, DatabaseMap} from "../../conf";
 import {CatalogInfo, CatalogRequestBody, TagInfo, TagRequestBody} from "../../types/tag-catalog";
 import {OkPacket} from "mysql";
 
@@ -34,7 +34,7 @@ export default class TagCatalogStatement {
         return query<CatalogInfo[]>(`select * from ${CATEGORY_TABLE_NAME}`)
     }
 
-    static async createCategory(data: CatalogRequestBody & {userId: number}) {
+    static async createCategory(data: CatalogRequestBody & { userId: number }) {
         const sqlStatement = `insert into ${CATEGORY_TABLE_NAME} (name, userId, updateTime, createTime) values (?, ?, ?, ?)`;
         const currentDate = formatDate(new Date());
         return query<OkPacket>(sqlStatement, [data.name, data.userId, currentDate, currentDate])

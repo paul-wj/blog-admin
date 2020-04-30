@@ -1,8 +1,14 @@
 import Joi, {ValidationResult} from 'joi';
-import { Context } from "koa";
-import { OkPacket } from 'mysql';
-import { JoiSchemaToSwaggerSchema, html_decode } from '../lib/utils';
-import { ServerResponse, SuccessResponses, SqlPageListResponse, PageListResponse, ServerSuccessResponsePageList } from '../types/response';
+import {Context} from "koa";
+import {OkPacket} from 'mysql';
+import {JoiSchemaToSwaggerSchema, html_decode} from '../lib/utils';
+import {
+    ServerResponse,
+    SuccessResponses,
+    SqlPageListResponse,
+    PageListResponse,
+    ServerSuccessResponsePageList
+} from '../types/response';
 import {
     ArticleInfo,
     CommentReplyInfo,
@@ -12,9 +18,15 @@ import {
     CreateCommentRequestBody,
     CommentReplyBaseInfo
 } from "../types/article";
-import { getTokenResult } from "../middleware/verify-token";
-import { RequestPageBody } from "../types/request";
-import { articlePageListSchema, articlePageListByCategoryIdSchema, createArticleSchema, createCommentReplySchema, createArticleCommentReplySchema } from '../lib/schemas/article';
+import {getTokenResult} from "../middleware/verify-token";
+import {RequestPageBody} from "../types/request";
+import {
+    articlePageListSchema,
+    articlePageListByCategoryIdSchema,
+    createArticleSchema,
+    createCommentReplySchema,
+    createArticleCommentReplySchema
+} from '../lib/schemas/article';
 import ArticleStatement from '../lib/statement/article';
 import {
     request,
@@ -45,7 +57,11 @@ const articleAllListResponse: SuccessResponses<ArticleInfo> = {
                             title: {type: 'string', example: 'string', description: '文章标题'},
                             viewCount: {type: 'number', example: 'number', description: '文章阅读数'},
                             tagIds: {type: 'array', items: {type: "string", example: 'string'}, description: '文章标签列表'},
-                            categories: {type: 'array', items: {type: "string", example: 'string'}, description: '文章目录列表'},
+                            categories: {
+                                type: 'array',
+                                items: {type: "string", example: 'string'},
+                                description: '文章目录列表'
+                            },
                             content: {type: 'string', example: 'string', description: '文章内容'},
                             userId: {type: 'number', example: 'number', description: '用户id'},
                             comments: {type: 'number', example: 'number', description: '文章评论数'},
@@ -78,8 +94,16 @@ const articlePageListResponse: ServerSuccessResponsePageList<ArticleInfo> = {
                                     id: {type: 'number', example: 'number', description: '文章id'},
                                     title: {type: 'string', example: 'string', description: '文章标题'},
                                     viewCount: {type: 'number', example: 'number', description: '文章阅读数'},
-                                    tagIds: {type: 'array', items: {type: "string", example: 'string'}, description: '文章标签列表'},
-                                    categories: {type: 'array', items: {type: "string", example: 'string'}, description: '文章目录列表'},
+                                    tagIds: {
+                                        type: 'array',
+                                        items: {type: "string", example: 'string'},
+                                        description: '文章标签列表'
+                                    },
+                                    categories: {
+                                        type: 'array',
+                                        items: {type: "string", example: 'string'},
+                                        description: '文章目录列表'
+                                    },
                                     content: {type: 'string', example: 'string', description: '文章内容'},
                                     userId: {type: 'number', example: 'number', description: '用户id'},
                                     comments: {type: 'number', example: 'number', description: '文章评论数'},
@@ -148,13 +172,25 @@ const articleCommentListResponse: SuccessResponses<CommentAndReplyInfo> = {
                                 type: 'object',
                                 properties: {
                                     id: {type: 'number', example: 'number', description: '回复id'},
-                                    replyWay: {type: 'number', example: 'number', description: '回复方式（10: 回复他人评论， 20：回复别人的回复）'},
-                                    replyId: {type: 'number', example: 'number', description: '回复目标id（replyWay为10时为commentId，replyWay为20时为replyId）'},
+                                    replyWay: {
+                                        type: 'number',
+                                        example: 'number',
+                                        description: '回复方式（10: 回复他人评论， 20：回复别人的回复）'
+                                    },
+                                    replyId: {
+                                        type: 'number',
+                                        example: 'number',
+                                        description: '回复目标id（replyWay为10时为commentId，replyWay为20时为replyId）'
+                                    },
                                     commentId: {type: 'number', example: 'number', description: '文章评论id'},
                                     userId: {type: 'number', example: 'number', description: '用户id'},
                                     toUserId: {type: 'number', example: 'number', description: '回复用户id'},
                                     content: {type: 'string', example: 'string', description: '回复内容'},
-                                    type: {type: 'number', example: 'number', description: '回复类型（10：点赞，20：踩,  30: 文字回复）'},
+                                    type: {
+                                        type: 'number',
+                                        example: 'number',
+                                        description: '回复类型（10：点赞，20：踩,  30: 文字回复）'
+                                    },
                                     createTime: {type: 'string', example: 'string', description: '创建时间'},
                                     userName: {type: 'string', example: 'string', description: '用户名'},
                                     userProfilePicture: {type: 'string', example: 'string', description: '用户头像'},
@@ -180,7 +216,7 @@ const formatArticleInfo = async (article: ArticleInfo, needContent: boolean = tr
 };
 
 @tagsAll(["文章API接口"])
-export default class Article extends JoiSchemaToSwaggerSchema{
+export default class Article extends JoiSchemaToSwaggerSchema {
     @request('get', '/article/all')
     @summary('获取所有文章')
     @responses({...Article.defaultServerResponse, ...articleAllListResponse})
@@ -273,7 +309,7 @@ export default class Article extends JoiSchemaToSwaggerSchema{
     })
     @responses({...Article.defaultServerResponse, ...articleDetailResponse})
     static async getArticleDetailById(ctx: Context): Promise<void> {
-        const { id } = ctx.params;
+        const {id} = ctx.params;
         let response = {} as ServerResponse<ArticleInfo>;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '当前文章id不存在（id为空）', result: null};
@@ -302,7 +338,7 @@ export default class Article extends JoiSchemaToSwaggerSchema{
     @query({...Article.parseToSwaggerSchema(articlePageListByCategoryIdSchema)})
     @responses({...Article.defaultServerResponse, ...articlePageListResponse})
     static async getArticlePageListByCategoryId(ctx: Context): Promise<void> {
-        const { id } = ctx.params;
+        const {id} = ctx.params;
         let response = {} as ServerResponse<PageListResponse<ArticleInfo>>;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '当前目录不存在（id为空）', result: null};
@@ -313,7 +349,10 @@ export default class Article extends JoiSchemaToSwaggerSchema{
             ctx.body = response = {code: 400, message: validator.error.message, result: null};
             return
         }
-        const queryResult: SqlPageListResponse<ArticleInfo> = await ArticleStatement.getArticlePageListByCategoryId({...ctx.query, categoryId: id});
+        const queryResult: SqlPageListResponse<ArticleInfo> = await ArticleStatement.getArticlePageListByCategoryId({
+            ...ctx.query,
+            categoryId: id
+        });
         if (queryResult && queryResult.length) {
             const [articleList, [{total}]] = queryResult;
             const processAwaitListFn = async (list: ArticleInfo[]): Promise<void> => {
@@ -344,7 +383,7 @@ export default class Article extends JoiSchemaToSwaggerSchema{
     @query({...Article.parseToSwaggerSchema(articlePageListByCategoryIdSchema)})
     @responses({...Article.defaultServerResponse, ...articlePageListResponse})
     static async getArticlePageListByTagId(ctx: Context): Promise<void> {
-        const { id } = ctx.params;
+        const {id} = ctx.params;
         let response = {} as ServerResponse<PageListResponse<ArticleInfo>>;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '当前标签不存在（id为空）', result: null};
@@ -355,7 +394,10 @@ export default class Article extends JoiSchemaToSwaggerSchema{
             ctx.body = response = {code: 400, message: validator.error.message, result: null};
             return
         }
-        const queryResult: SqlPageListResponse<ArticleInfo> = await ArticleStatement.getArticlePageListByTagIdId({...ctx.query, tagId: id});
+        const queryResult: SqlPageListResponse<ArticleInfo> = await ArticleStatement.getArticlePageListByTagIdId({
+            ...ctx.query,
+            tagId: id
+        });
         if (queryResult && queryResult.length) {
             const [articleList, [{total}]] = queryResult;
             const processAwaitListFn = async (list: ArticleInfo[]): Promise<void> => {
@@ -390,10 +432,15 @@ export default class Article extends JoiSchemaToSwaggerSchema{
             ctx.body = response = {...response, code: 400, message: '用户未登录', result: null};
             return
         }
-        let { categories, content, tagIds, title} = body;
+        let {categories, content, tagIds, title} = body;
         categories = categories.toString();
         tagIds = tagIds.toString();
-        const validator: ValidationResult<CreateArticleRequestBody> = Joi.validate({ categories, content, tagIds, title}, createArticleSchema);
+        const validator: ValidationResult<CreateArticleRequestBody> = Joi.validate({
+            categories,
+            content,
+            tagIds,
+            title
+        }, createArticleSchema);
         if (validator.error) {
             ctx.body = response = {...response, code: 400, message: validator.error.message};
             return
@@ -422,15 +469,20 @@ export default class Article extends JoiSchemaToSwaggerSchema{
             ctx.body = response = {code: 400, message: '不能编辑他人创建文章', result: null};
             return
         }
-        let { categories, content, tagIds, title} = body;
+        let {categories, content, tagIds, title} = body;
         categories = categories.toString();
         tagIds = tagIds.toString();
-        const validator: ValidationResult<CreateArticleRequestBody> = Joi.validate({ categories, content, tagIds, title}, createArticleSchema);
+        const validator: ValidationResult<CreateArticleRequestBody> = Joi.validate({
+            categories,
+            content,
+            tagIds,
+            title
+        }, createArticleSchema);
         if (validator.error) {
             ctx.body = response = {...response, code: 400, message: validator.error.message};
             return
         }
-        const editArticle: OkPacket = await ArticleStatement.editArticle(id, { categories, content, tagIds, title});
+        const editArticle: OkPacket = await ArticleStatement.editArticle(id, {categories, content, tagIds, title});
         if (editArticle && editArticle.insertId !== void 0) {
             response = {code: 0, message: '成功', result: null};
         }
@@ -583,21 +635,33 @@ export default class Article extends JoiSchemaToSwaggerSchema{
         }
         const {id: userId} = userInfo;
         const {articleId, type, content, toUserId, replyWay, replyId} = body;
-        const requestBody = {commentId, type, content, toUserId, userId, replyWay, replyId: replyWay === 10 ? commentId : replyId};
+        const requestBody = {
+            commentId,
+            type,
+            content,
+            toUserId,
+            userId,
+            replyWay,
+            replyId: replyWay === 10 ? commentId : replyId
+        };
         const validator = Joi.validate(requestBody, createArticleCommentReplySchema);
         if (validator.error) {
             ctx.body = response = {code: 400, message: validator.error.message, result: null};
             return
         }
         if (toUserId === userId) {
-            ctx.body = response = {code: 400, message: `当前未开放自己为自己${type === 10 ? '点赞' : type === 30 ?  '评论' : '踩'}功能!`, result: null};
+            ctx.body = response = {
+                code: 400,
+                message: `当前未开放自己为自己${type === 10 ? '点赞' : type === 30 ? '评论' : '踩'}功能!`,
+                result: null
+            };
             return
         }
         const replyList: CommentReplyBaseInfo[] = await ArticleStatement.getArticleCommentReplyListByReplyWayAndReplyId(replyWay, replyWay === 10 ? commentId : replyId);
         let queryResult: OkPacket = {} as OkPacket;
         if ([10, 20].includes(type)) {
             let replyIndex = replyList.findIndex(item => item.userId === userId && item.type === type);
-            queryResult = replyIndex > -1 ?  await ArticleStatement.deleteArticleCommentReplyByReplyId(replyList[replyIndex].id, false) : await ArticleStatement.createArticleCommentReply(commentId, requestBody);
+            queryResult = replyIndex > -1 ? await ArticleStatement.deleteArticleCommentReplyByReplyId(replyList[replyIndex].id, false) : await ArticleStatement.createArticleCommentReply(commentId, requestBody);
         } else {
             queryResult = await ArticleStatement.createArticleCommentReply(commentId, requestBody);
         }

@@ -37,7 +37,7 @@ export type ServerSuccessResponsePageList<T> = Record<'200', {
 
 export type SuccessResponses<T> = Pick<ServerResponseAll<T>, '200'>;
 
-export type SqlPageListResponse<T> = [T[], [{total: number}]];
+export type SqlPageListResponse<T> = [T[], [{ total: number }]];
 
 export type PageListResponse<T> = { items: T[], total: number };
 
