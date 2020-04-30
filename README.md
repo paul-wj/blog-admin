@@ -1,4 +1,4 @@
-## koa2 + mysql + ioredis + koa2-cors
+## typescript + koa2 + koa-swagger-decorator + mysql
 
 > 个人博客的后台api系统
 
@@ -11,13 +11,13 @@
 ### 实现功能
 
 - [x] RESTful api 实现
-- [x] 登录信息2小时过期（2小时内无任何操作）
+- [x] swagger接口文档实现
+- [x] websocket实现
 
 ### 技术栈
-- 后端
 
-  - koa2 + mysql + ioredis
-  - `joi dayjs koa2-cors koa-helmet`
+- typescript + koa2 + mysql + koa-swagger-decorator
+- `joi dayjs koa2-cors koa-helmet jsonwebtoken`
 
 ## 博客预览
 ### pc 端管理系统页面
@@ -30,16 +30,21 @@
 ```js
 .
 │
-├─config                // 项目配置
-├─init                  // 初始化数据库表结构
+├─public                // 公共资源
+├─src                   // 代码入口文件
 ├─static                // 后台静态文件目录
 └─src
-   ├─controller         // 业务代码
-   ├─routers         	  // 路由目录
-   ├─schemas            // 校验目录
-   ├─sql                // sql语句目录
-   ├─utils              // 工具函数目录
-   └─
+   ├─conf               // 配置目录
+   ├─controller         // controller目录
+   ├─middleware         // 中间件目录
+   ├─types              // 数据类型
+   ├─router             // 路由目录
+   ├─lib                // 工具方法目录
+   ├─server.js          // 启动文件
+   └─lib
+       ├─schemas        // 校验目录
+       ├─utils          // 工具目录
+       └─statement      // 数据库语句目录
 ```
 
 ## 表结构
@@ -148,7 +153,7 @@ git https://github.com/paul-wj/blog-amdin.git
 
 ## 安装依赖以及开启开发模式
 cd blog-amdin
-pm2 start index.js
-
+npm install
+npm run watch-server
 ```
 PS : 觉得不错的伙伴可以给个 star ~~~ 或者 fork 下来看看哦。如果有什么建议，也可以提 issue 哦
