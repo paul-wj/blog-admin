@@ -22,7 +22,12 @@
 ## 博客预览
 ### pc 端管理系统页面
 
-![](https://user-gold-cdn.xitu.io/2019/10/28/16e1140fab4cba72?imageView2/2/w/480/h/480/q/85/interlace/1)
+![](https://user-gold-cdn.xitu.io/2019/10/28/16e1140fab4cba72)
+
+### swagger接口文档页面
+
+![](https://user-gold-cdn.xitu.io/2020/4/30/171ca66adfde698a)
+
 
 ## 项目结构
 
