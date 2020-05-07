@@ -13,7 +13,11 @@ export class JoiSchemaToSwaggerSchema {
         const {type, children} = joiDescription;
         if (type === 'object') {
             for (let [joiTargetKey, joiTargetValue] of Object.entries(children as Record<string, Description>)) {
-                const {type, flags, description} = joiTargetValue;
+                let {type, flags, description} = joiTargetValue;
+                if (type === 'alternatives') {
+                    type = joiTargetValue.base.type;
+                    description = joiTargetValue.base.description;
+                }
                 swaggerSchema[joiTargetKey] = {
                     type,
                     required: flags ? (flags as ValidationOptions).presence === 'required' : false,
