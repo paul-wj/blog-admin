@@ -8,7 +8,9 @@ import {
     CommentReplyInfo,
     CreateCommentRequestBody,
     CreateArticleCommentReplyRequestBody,
-    CommentReplyBaseInfo
+    CommentReplyBaseInfo,
+    CommentInfo,
+    CommentReplyStatementInfo
 } from "../../types/article";
 import {RequestPageBody} from "../../types/request";
 import {html_encode} from "../utils";
@@ -98,5 +100,13 @@ export default class ArticleStatement {
         const currentDate = formatDate(new Date());
         const sqlStatement = `insert into ${ARTICLE_REPLY_TABLE_NAME} (commentId, replyWay, replyId, userId, toUserId, content, type, createTime) values (?, ?, ?, ?, ?, ?, ?, ?)`;
         return query<OkPacket>(sqlStatement, [commentId, replyWay, replyId, userId, toUserId, content, type, currentDate]);
+    }
+
+    static async getArticleCommentAllList() {
+        return query<CommentInfo[]>(`select * from ${ARTICLE_COMMENT_TABLE_NAME} order by createTime desc`)
+    }
+
+    static async getArticleCommentAllReplyList() {
+        return query<CommentReplyStatementInfo[]>(`select * from ${ARTICLE_REPLY_TABLE_NAME} order by createTime desc`)
     }
 }
