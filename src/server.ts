@@ -8,7 +8,7 @@ import koaBodyParser from 'koa-bodyparser';
 import koaCors from 'koa2-cors';
 import koaLogger from 'koa-logger';
 import {checkTokenMiddleware} from './middleware/verify-token';
-import router from './router';
+import router, {koaRouterOpts} from './router';
 import {
     staticPathConfig,
     globalConfig,
@@ -51,5 +51,5 @@ app.listen(globalConfig.port);
 
 console.log(`
 Server running on port http://localhost:${globalConfig.port}
-Swagger docs avaliable at http://localhost:${globalConfig.port}/swagger-html
+Swagger docs avaliable at http://localhost:${globalConfig.port}${koaRouterOpts.prefix}/swagger-html
 `);
