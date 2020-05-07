@@ -1,7 +1,7 @@
 import path from 'path';
 import {SwaggerRouter} from "koa-swagger-decorator/dist";
 
-const koaRouterOpts = {prefix: ''};
+export const koaRouterOpts = {prefix: ''};
 const swaggerRouterOpts = {
     title: "Paul Blog 后台接口文档",
     description: "后台接口文档",

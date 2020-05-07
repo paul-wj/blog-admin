@@ -2,7 +2,7 @@ import Joi, {ValidationResult} from 'joi';
 import {Context} from "koa";
 import {OkPacket} from 'mysql';
 import {JoiSchemaToSwaggerSchema} from '../lib/utils';
-import {ArticleInfo, CreateArticleRequestBody} from "../types/article";
+import {ArticleInfo} from "../types/article";
 import ArticleStatement from "../lib/statement/article";
 import {CatalogInfo, CatalogRequestBody, TagInfo, TagRequestBody} from "../types/tag-catalog";
 import TagCatalogStatement from '../lib/statement/tag-catalog';
@@ -58,6 +58,7 @@ const tagAllListResponse: SuccessResponses<TagInfo> = {
 export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     @request('post', '/tag')
     @summary('新增标签')
+    @header(TagCatalog.defaultHeaders)
     @body({...TagCatalog.parseToSwaggerSchema(createTagSchema)})
     @responses({...TagCatalog.defaultServerResponse})
     static async createTag(ctx: Context): Promise<void> {
@@ -83,6 +84,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
 
     @request('patch', '/tag/:id')
     @summary('编辑标签信息')
+    @header(TagCatalog.defaultHeaders)
     @path({
         id: {type: 'number', description: '标签id'}
     })
@@ -123,13 +125,14 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
             });
             response = {code: 0, message: '成功', result: tagList};
         } else {
-            response = {code: 404, message: '信息不存在', result: null};
+            response = {code: 404, message: '资源不存在', result: null};
         }
         ctx.body = response;
     }
 
     @request('delete', '/tag/:id')
     @summary('删除标签')
+    @header(TagCatalog.defaultHeaders)
     @path({
         id: {type: 'number', description: '标签id'}
     })
@@ -167,13 +170,14 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
             });
             response = {code: 0, message: '成功', result: catalogList};
         } else {
-            response = {code: 404, message: '信息不存在', result: null};
+            response = {code: 404, message: '资源不存在', result: null};
         }
         ctx.body = response;
     }
 
     @request('post', '/category')
     @summary('新增目录')
+    @header(TagCatalog.defaultHeaders)
     @body({...TagCatalog.parseToSwaggerSchema(createCatalogSchema)})
     @responses({...TagCatalog.defaultServerResponse})
     static async createCatalog(ctx: Context): Promise<void> {
@@ -199,6 +203,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
 
     @request('patch', '/category/:id')
     @summary('编辑目录信息')
+    @header(TagCatalog.defaultHeaders)
     @path({
         id: {type: 'number', description: '目录id'}
     })
@@ -228,6 +233,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
 
     @request('delete', '/category/:id')
     @summary('删除目录')
+    @header(TagCatalog.defaultHeaders)
     @path({
         id: {type: 'number', description: '目录id'}
     })
@@ -251,5 +257,4 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
         }
         ctx.body = response;
     }
-
 }

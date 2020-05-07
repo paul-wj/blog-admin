@@ -23,6 +23,8 @@ export interface CommentUserInfo {
     userProfilePicture: string;
 }
 
+export type CommentInfo = Omit<CommentUserInfo, 'userName' | 'userProfilePicture'>;
+
 export interface ArticlePageListRequestBody extends RequestPageBody {
     title: string;
 }
@@ -48,6 +50,8 @@ export interface CommentReplyBaseInfo {
     userProfilePicture: string;
     toUserName: string;
 }
+
+export type CommentReplyStatementInfo = Omit<CommentReplyBaseInfo, 'userName' | 'userProfilePicture' | 'toUserName'>;
 
 export interface CommentReplyInfo extends CommentReplyBaseInfo {
     isReply?: boolean;

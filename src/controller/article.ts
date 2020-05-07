@@ -38,7 +38,6 @@ import {
     responses,
     header
 } from 'koa-swagger-decorator/dist';
-import TagCatalogStatement from "../lib/statement/tag-catalog";
 
 const articleAllListResponse: SuccessResponses<ArticleInfo> = {
     200: {
@@ -232,7 +231,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
             await processAwaitListFn(articleList);
             response = {code: 0, message: '成功', result: articleList};
         } else {
-            response = {code: 404, message: '信息不存在', result: null};
+            response = {code: 404, message: '资源不存在', result: null};
         }
         ctx.body = response;
     }
@@ -422,6 +421,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
 
     @request('post', '/article')
     @summary('创建文章')
+    @header(Article.defaultHeaders)
     @body({...Article.parseToSwaggerSchema(createArticleSchema)})
     @responses({...Article.defaultServerResponse})
     static async createArticle(ctx: Context): Promise<void> {
@@ -453,6 +453,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
     }
 
     @request('patch', '/article/:id')
+    @header(Article.defaultHeaders)
     @summary('编辑文章')
     @body({...Article.parseToSwaggerSchema(createArticleSchema)})
     @responses({...Article.defaultServerResponse})
@@ -491,6 +492,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
 
     @request('delete', '/article/:id')
     @summary('删除文章')
+    @header(Article.defaultHeaders)
     @path({
         id: {type: 'number', description: '文章id'}
     })
@@ -563,6 +565,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
 
     @request('post', '/article/comment/:id')
     @summary('新增文章评论')
+    @header(Article.defaultHeaders)
     @path({
         id: {type: 'number', description: '文章id'}
     })
@@ -600,6 +603,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
 
     @request('delete', '/article/comment/:id')
     @summary('删除文章评论')
+    @header(Article.defaultHeaders)
     @path({
         id: {type: 'number', description: '评论id'}
     })
@@ -620,6 +624,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
 
     @request('post', '/article/reply/:id')
     @summary('新增文章评论回复')
+    @header(Article.defaultHeaders)
     @path({
         id: {type: 'number', description: '评论id'}
     })
@@ -681,6 +686,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
 
     @request('delete', '/article/reply/:id')
     @summary('删除评论回复')
+    @header(Article.defaultHeaders)
     @path({
         id: {type: 'number', description: '评论id'}
     })
