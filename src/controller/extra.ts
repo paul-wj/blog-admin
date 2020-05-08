@@ -2,6 +2,7 @@ import Joi, {ValidationResult} from 'joi';
 import {Context} from "koa";
 import {OkPacket} from 'mysql';
 import {JoiSchemaToSwaggerSchema} from '../lib/utils';
+import { formatDate } from "../lib/utils";
 import dayJs from 'dayjs';
 import {
     ServerResponse,
@@ -23,12 +24,19 @@ import {
     ExtraAboutCommentRequestBody,
     ExtraAboutCommentReplyRequestBody,
     ExtraStatisticsInfo,
-    ExtraStatisticsTotalInfo
+    ExtraStatisticsTotalInfo, ExtraNoticeInfo, ExtraReadMessageRequestBody, ExtraNoticeRequestBody
 } from "../types/extra";
 import {getTokenResult} from "../middleware/verify-token";
-import {createExtraAboutCommentReplySchema, createExtraAboutCommentSchema} from "../lib/schemas/extra";
+import { webSocketObj } from "../lib/utils/webSocket";
+import {
+    createExtraAboutCommentReplySchema,
+    createExtraAboutCommentSchema,
+    readMessageSchema
+} from "../lib/schemas/extra";
 import ArticleStatement from "../lib/statement/article";
 import {ArticleInfo, CommentInfo, CommentReplyStatementInfo} from "../types/article";
+import UserStatement from "../lib/statement/user";
+import {ivory} from "color-name";
 
 const getStatisticsInfo = (list: ArticleInfo[] | CommentInfo[] | CommentReplyStatementInfo[]): ExtraStatisticsTotalInfo => {
     const totalObj: ExtraStatisticsTotalInfo = {
@@ -123,6 +131,39 @@ const extraStatisticsResponse: SuccessResponses<ExtraStatisticsInfo> = {
     }
 };
 
+const extraNoticeInfoResponse: SuccessResponses<ExtraNoticeInfo> = {
+    200: {
+        description: 'success',
+        schema: {
+            type: 'object',
+            properties: {
+                code: {type: 'number', example: 0, description: '状态码'},
+                message: {type: 'string', example: '成功', description: '提示信息'},
+                result: {
+                    type: "array",
+                    items: {
+                        type: 'object',
+                        properties: {
+                            sendId: {type: 'number', example: 'number', description: '发送人id'},
+                            recId: {type: 'number', example: 'number', description: '接收人id'},
+                            messageId: {type: 'number', example: 'number', description: '消息内容id'},
+                            id: {type: 'number', example: 'number', description: '消息id'},
+                            type: {type: 'number', example: 'number', description: '消息类型'},
+                            title: {type: 'string', example: 'string', description: '评论主题'},
+                            sourceId: {type: 'number', example: 'number', description: '评论源id'},
+                            content: {type: 'string', example: 'string', description: '评论内容'},
+                            createDate: {type: 'string', example: 'string', description: '发送日期'},
+                            STATUS: {type: 'number', example: 'number', description: '状态'},
+                            profilePicture: {type: 'string', example: 'string', description: '发送人名称'},
+                            sendName: {type: 'string', example: 'string', description: '接收人名称'},
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
 @tagsAll(["系统附加信息API接口"])
 export default class Extra extends JoiSchemaToSwaggerSchema {
     @request('get', '/extra/about/comment')
@@ -202,7 +243,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @request('get', '/extra/statistics/article')
     @summary('获取文章数量数据统计')
     @responses({...Extra.defaultServerResponse, ...extraStatisticsResponse})
-    static async getStatisticsForArticle(ctx: Context) {
+    static async getStatisticsForArticle(ctx: Context): Promise<void> {
         let response = {} as ServerResponse<ExtraStatisticsInfo>;
         let articleStatistics: ExtraStatisticsInfo = {
             total: 0,
@@ -228,7 +269,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @request('get', '/extra/statistics/comment')
     @summary('获取文章评论数量数据统计')
     @responses({...Extra.defaultServerResponse, ...extraStatisticsResponse})
-    static async getStatisticsForComment(ctx: Context) {
+    static async getStatisticsForComment(ctx: Context): Promise<void> {
         let response = {} as ServerResponse<ExtraStatisticsInfo>;
         let articleStatistics: ExtraStatisticsInfo = {
             total: 0,
@@ -254,7 +295,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @request('get', '/extra/statistics/reply')
     @summary('获取文章评论回复数量数据统计')
     @responses({...Extra.defaultServerResponse, ...extraStatisticsResponse})
-    static async getStatisticsForReply(ctx: Context) {
+    static async getStatisticsForReply(ctx: Context): Promise<void> {
         let response = {} as ServerResponse<ExtraStatisticsInfo>;
         let articleStatistics: ExtraStatisticsInfo = {
             total: 0,
@@ -275,5 +316,100 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
             }
         }
         ctx.body = response = {code: 0, result: articleStatistics, message: '成功'};
+    }
+
+    @request('get', '/extra/message-un-read')
+    @summary('获取未读消息列表')
+    @header(Extra.defaultHeaders)
+    @responses({...Extra.defaultServerResponse, ...extraNoticeInfoResponse})
+    static async getUnreadMessageList(ctx: Context): Promise<void> {
+        const {header: {refresh_token}} = ctx;
+        const {data: userInfo} = await getTokenResult(refresh_token);
+        let response = {} as ServerResponse<ExtraNoticeInfo[]>;
+        if (!userInfo) {
+            ctx.body = response = {...response, code: 400, message: '用户未登录', result: null};
+            return
+        }
+        const {id: userId} = userInfo;
+        if (userId) {
+            const unreadMessageList: ExtraNoticeInfo[] = await ExtraStatement.getUnreadMessageList(userId);
+            response = unreadMessageList && unreadMessageList.length
+                ? {code: 0, message: '成功', result: unreadMessageList}
+                : {code: 404, message: '资源不存在', result: null};
+        } else {
+            response = {code: 404, message: '资源不存在', result: null};
+        }
+        ctx.body = response;
+    }
+
+    @request('post', '/extra/message-read')
+    @summary('消息已读操作')
+    @body({...Extra.parseToSwaggerSchema(readMessageSchema)})
+    @responses({...Extra.defaultServerResponse})
+    static async readMessage(ctx: Context): Promise<void> {
+        const {header: {refresh_token}, request: {body}} = ctx;
+        const {data: userInfo} = await getTokenResult(refresh_token);
+        let response = {} as ServerResponse;
+        if (!userInfo) {
+            ctx.body = response = {...response, code: 400, message: '用户未登录', result: null};
+            return
+        }
+        const {id: userId} = userInfo;
+        const {messageId} = body;
+        const validator: ValidationResult<ExtraReadMessageRequestBody> = Joi.validate({messageId}, readMessageSchema);
+        if (validator.error) {
+            ctx.body = response = {...response, code: 400, message: validator.error.message};
+            return
+        }
+        const readResult: OkPacket = await ExtraStatement.createMessageUser({messageId, userId});
+        if (readResult && readResult.insertId !== void 0) {
+            response = {code: 0, message: '成功', result: null};
+        }
+        ctx.body = response;
+    }
+
+    @request('post', '/extra/message-read-batch')
+    @summary('消息批量已读操作')
+    @responses({...Extra.defaultServerResponse})
+    static async batchReadMessage(ctx: Context): Promise<void> {
+        const {header: {refresh_token}, request: {body}} = ctx;
+        const {data: userInfo} = await getTokenResult(refresh_token);
+        let response = {} as ServerResponse;
+        if (!userInfo) {
+            ctx.body = response = {...response, code: 400, message: '用户未登录', result: null};
+            return
+        }
+        const {id: userId} = userInfo;
+        const {messageIdList} = body;
+        const currentDate = formatDate(new Date());
+        const sqlValues = messageIdList.map((messageId: number) => [userId, messageId, currentDate]);
+        const batchReadResult: OkPacket = await ExtraStatement.batchCreateMessageUser(sqlValues);
+        if (batchReadResult && batchReadResult.insertId !== void 0) {
+            response = {code: 0, message: '成功', result: null}
+        }
+        ctx.body = response;
+    }
+
+    static async createNotice(data: ExtraNoticeRequestBody): Promise<void> {
+        const {sendId, recId, content, title, type, sourceId} = data;
+        const messageContentRes = await ExtraStatement.createMessageContent({content, title, type, sourceId});
+        if (messageContentRes && messageContentRes.insertId) {
+            const messageId = messageContentRes.insertId;
+            const messageRes = await ExtraStatement.createMessage({sendId, recId, messageId});
+            if (messageRes && messageRes.insertId !== void 0) {
+                const userList = await UserStatement.getAllUserList();
+                if (userList && userList.length) {
+                    const sendName = userList.find(user => user.id === sendId).username;
+                    const noticeResult = {sendName, content, title, type};
+                    if (recId === 0) {
+                        webSocketObj.sendSystemNotice(noticeResult)
+                    } else {
+                        webSocketObj.sendNotice(recId, noticeResult)
+                    }
+                } else {
+                    console.log(`用户表不存在或用户不存在，无法发送通知`)
+                }
+            }
+        }
     }
 }

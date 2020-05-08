@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import {SchemaObject} from '../../types/schema';
-import {ExtraAboutCommentRequestBody, ExtraAboutCommentReplyRequestBody} from "../../types/extra";
+import {ExtraAboutCommentRequestBody, ExtraAboutCommentReplyRequestBody, ExtraReadMessageRequestBody} from "../../types/extra";
 
 const createExtraAboutCommentSchemaObj: SchemaObject<ExtraAboutCommentRequestBody> = {
     content: Joi.string().description('留言内容').required().error(new Error('留言内容不能为空')),
@@ -16,3 +16,10 @@ const createExtraAboutCommentReplySchemaObj: SchemaObject<ExtraAboutCommentReply
 };
 
 export const createExtraAboutCommentReplySchema = Joi.object().keys(createExtraAboutCommentReplySchemaObj);
+
+
+const readMessageSchemaObj: SchemaObject<ExtraReadMessageRequestBody> = {
+    messageId: Joi.number().required().error(new Error('消息id不存在')),
+};
+
+export const readMessageSchema = Joi.object().keys(readMessageSchemaObj);

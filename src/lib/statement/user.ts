@@ -28,4 +28,8 @@ export default class UserStatement {
         const {name, limit, offset} = params;
         return query<SqlPageListResponse<UserInfo>>(`select * from ${USER_TABLE_NAME} where username like '%${ name || ''}%' limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`);
     }
+
+    static async getAllUserList() {
+        return query<UserInfo[]>(`select * from ${USER_TABLE_NAME}`)
+    }
 }

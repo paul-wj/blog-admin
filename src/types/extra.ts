@@ -49,3 +49,32 @@ export interface ExtraStatisticsTotalInfo {
     lastWeekTotal: number;
     weekTotal: number;
 }
+
+export interface ExtraNoticeInfo {
+    sendId: number;
+    recId: number;
+    messageId: number;
+    id: number;
+    type: number;
+    title: string;
+    sourceId: number;
+    content: string;
+    createDate: string;
+    STATUS: number;
+    profilePicture: string;
+    sendName: string;
+}
+
+export interface ExtraReadMessageRequestBody {
+    messageId: number;
+}
+
+export interface ExtraNoticeRequestBody {
+    sendId: number;
+    recId: number;
+    content: string;
+    title: string;
+    type: number;
+    sourceId: number;
+}
+
