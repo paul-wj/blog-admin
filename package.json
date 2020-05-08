@@ -26,7 +26,8 @@
     "koa-static": "^5.0.0",
     "koa-swagger-decorator": "^1.6.4",
     "koa2-cors": "^2.0.6",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "@types/joi": "^14.3.4",
@@ -40,6 +41,7 @@
     "@types/koa-static": "^4.0.1",
     "@types/koa2-cors": "^2.0.1",
     "@types/mysql": "^2.15.10",
+    "@types/socket.io": "^2.1.4",
     "nodemon": "^2.0.3",
     "ts-node": "^8.9.0",
     "tslint": "^6.1.1",

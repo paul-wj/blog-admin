@@ -1,12 +1,14 @@
+import http, {Server} from 'http';
+import zlib from 'zlib';
 import Koa from 'koa';
 import koaCompress from 'koa-compress';
-import zlib from 'zlib';
 import koaStatic from 'koa-static';
 import koaHelmet from 'koa-helmet';
 import koaBody from 'koa-body';
 import koaBodyParser from 'koa-bodyparser';
 import koaCors from 'koa2-cors';
 import koaLogger from 'koa-logger';
+import { startWebSocketApp } from "./lib/utils/webSocket";
 import {checkTokenMiddleware} from './middleware/verify-token';
 import router, {koaRouterOpts} from './router';
 import {
@@ -16,6 +18,11 @@ import {
 } from './conf';
 
 const app = new Koa();
+
+const server: Server = new http.Server(app.callback());
+
+//配置webSocket
+startWebSocketApp(server);
 
 //当响应体比较大时，koa-compose启用类似Gzip的压缩技术减少传输内容
 app.use(koaCompress({
@@ -47,9 +54,9 @@ app.use(checkTokenMiddleware);
 
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(globalConfig.port);
-
-console.log(`
-Server running on port http://localhost:${globalConfig.port}
-Swagger docs avaliable at http://localhost:${globalConfig.port}${koaRouterOpts.prefix}/swagger-html
-`);
+server.listen(globalConfig.port, () => {
+    console.log(`
+    Server running on port http://localhost:${globalConfig.port}
+    Swagger docs avaliable at http://localhost:${globalConfig.port}${koaRouterOpts.prefix}/swagger-html
+    `)
+});
