@@ -10,6 +10,7 @@ import koaCors from 'koa2-cors';
 import koaLogger from 'koa-logger';
 import { startWebSocketApp } from "./lib/utils/webSocket";
 import {checkTokenMiddleware} from './middleware/verify-token';
+import { loggerMiddleware } from "./middleware/logger";
 import router, {koaRouterOpts} from './router';
 import {
     staticPathConfig,
@@ -51,6 +52,8 @@ app.use(koaCors(crosOptions));
 app.use(koaLogger());
 
 app.use(checkTokenMiddleware);
+
+app.use(loggerMiddleware);
 
 app.use(router.routes()).use(router.allowedMethods());
 
