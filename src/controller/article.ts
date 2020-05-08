@@ -38,6 +38,7 @@ import {
     responses,
     header
 } from 'koa-swagger-decorator/dist';
+import Extra from "./extra";
 
 const articleAllListResponse: SuccessResponses<ArticleInfo> = {
     200: {
@@ -596,6 +597,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
             if (articleResult && articleResult.length) {
                 const [articleDetail] = articleResult;
                 const {userId: recId, title} = articleDetail;
+                Extra.createNotice({sendId: userInfo.id, recId, content, title, type: 10, sourceId: id});
             }
         }
         ctx.body = response;
@@ -677,7 +679,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
                 const [articleDetail] = articleResult;
                 const {title} = articleDetail;
                 if (userId !== toUserId) {
-                    // createNotice({sendId: userId, recId: toUserId, content, title, type: type === 10 ? 30 : type === 30 ?  20 : 40, sourceId: articleId});
+                    Extra.createNotice({sendId: userId, recId: toUserId, content, title, type: type === 10 ? 30 : type === 30 ?  20 : 40, sourceId: articleId});
                 }
             }
         }
