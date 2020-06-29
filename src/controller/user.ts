@@ -1,3 +1,5 @@
+import fs from 'fs';
+import nodePath from 'path';
 import Joi, {number, ValidationResult} from 'joi';
 import {Context} from "koa";
 import {OkPacket} from 'mysql';
@@ -14,6 +16,9 @@ import {IJwtToken, getJwtToken, removeJwtToken} from '../middleware/verify-token
 import {registerUserSchema, loginSchema, userListSchema, updateUserSchema} from '../lib/schemas/user';
 import UserStatement from '../lib/statement/user';
 import {
+    staticPathConfig,
+} from '../conf';
+import {
     request,
     summary,
     body,
@@ -23,8 +28,6 @@ import {
     responses,
     header
 } from 'koa-swagger-decorator/dist';
-import {CreateCommentRequestBody} from "../types/article";
-import {createCommentReplySchema} from "../lib/schemas/article";
 
 const loginResponses: SuccessResponses<SingleUserInfo & IJwtToken> = {
     200: {
@@ -89,6 +92,21 @@ const userListResponse: ServerSuccessResponsePageList<SingleUserInfo> = {
 
 @tagsAll(["系统用户API接口"])
 export default class User extends JoiSchemaToSwaggerSchema {
+    @request('post', '/upload')
+    static async uploadFile(ctx: Context): Promise<void> {
+        let response = {} as ServerResponse<string>;
+        const file = ctx.request.files.file;
+        const fileName = file.name;
+        const render = fs.createReadStream(file.path);
+        const filePath = nodePath.join(staticPathConfig.BASE_PATH, 'static/upload/', fileName);
+        const fileDir = nodePath.join(staticPathConfig.BASE_PATH, 'static/upload/');
+        // 创建写入流
+        const upStream = fs.createWriteStream(filePath);
+        render.pipe(upStream);
+        response.result = `https://www.wangjie818.wang/upload/${fileName}`;
+        response.message = '上传成功';
+        ctx.body = response;
+    }
     @request('post', '/user')
     @summary('用户注册')
     @body({...User.parseToSwaggerSchema(registerUserSchema)})
