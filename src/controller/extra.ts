@@ -192,7 +192,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @body({...Extra.parseToSwaggerSchema(createExtraAboutCommentSchema)})
     @responses({...Extra.defaultServerResponse})
     static async createExtraAboutComment(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {
@@ -218,7 +218,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @body({...Extra.parseToSwaggerSchema(createExtraAboutCommentReplySchema)})
     @responses({...Extra.defaultServerResponse})
     static async createExtraAboutCommentReply(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {
@@ -323,7 +323,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @header(Extra.defaultHeaders)
     @responses({...Extra.defaultServerResponse, ...extraNoticeInfoResponse})
     static async getUnreadMessageList(ctx: Context): Promise<void> {
-        const {header: {refresh_token}} = ctx;
+        const {header: {'refresh-token': refresh_token}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse<ExtraNoticeInfo[]>;
         if (!userInfo) {
@@ -347,7 +347,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @body({...Extra.parseToSwaggerSchema(readMessageSchema)})
     @responses({...Extra.defaultServerResponse})
     static async readMessage(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {
@@ -372,7 +372,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @summary('消息批量已读操作')
     @responses({...Extra.defaultServerResponse})
     static async batchReadMessage(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {

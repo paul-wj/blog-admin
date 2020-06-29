@@ -426,7 +426,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
     @body({...Article.parseToSwaggerSchema(createArticleSchema)})
     @responses({...Article.defaultServerResponse})
     static async createArticle(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {
@@ -459,7 +459,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
     @body({...Article.parseToSwaggerSchema(createArticleSchema)})
     @responses({...Article.defaultServerResponse})
     static async editArticle(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}, request: {body}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         let response = {} as ServerResponse;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '文章id不存在', result: null};
@@ -499,7 +499,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
     })
     @responses({...Article.defaultServerResponse})
     static async deleteArticle(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}} = ctx;
         let response = {} as ServerResponse;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '文章id不存在', result: null};
@@ -573,7 +573,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
     @body({...Article.parseToSwaggerSchema(createCommentReplySchema)})
     @responses({...Article.defaultServerResponse})
     async createArticleComment(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}, request: {body}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         let response = {} as ServerResponse;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '文章id不存在', result: null};
@@ -633,7 +633,7 @@ export default class Article extends JoiSchemaToSwaggerSchema {
     @body({...Article.parseToSwaggerSchema(createArticleCommentReplySchema)})
     @responses({...Article.defaultServerResponse})
     async createArticleCommentReply(ctx: Context): Promise<void> {
-        const {params: {id: commentId}, header: {refresh_token}, request: {body}} = ctx;
+        const {params: {id: commentId}, header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         let response = {} as ServerResponse;
         const {data: userInfo} = getTokenResult(refresh_token);
         if (!userInfo) {

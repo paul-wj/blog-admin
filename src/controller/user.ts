@@ -193,7 +193,7 @@ export default class User extends JoiSchemaToSwaggerSchema {
     @header(User.defaultHeaders)
     @responses({...User.defaultServerResponse})
     static async logout(ctx: Context): Promise<void> {
-        const {header: {refresh_token}} = ctx;
+        const {header: {'refresh-token': refresh_token}} = ctx;
         refresh_token && removeJwtToken(refresh_token);
         ctx.body = {code: 0, message: '成功', result: null};
     }

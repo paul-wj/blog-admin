@@ -62,7 +62,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     @body({...TagCatalog.parseToSwaggerSchema(createTagSchema)})
     @responses({...TagCatalog.defaultServerResponse})
     static async createTag(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {
@@ -91,7 +91,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     @body({...TagCatalog.parseToSwaggerSchema(createTagSchema)})
     @responses({...TagCatalog.defaultServerResponse})
     static async editTag(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}, request: {body}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         let response = {} as ServerResponse;
         const [currentTag,] = await TagCatalogStatement.getTagById(id);
         const {name, color} = body;
@@ -138,7 +138,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     })
     @responses({...TagCatalog.defaultServerResponse})
     static async deleteTag(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}} = ctx;
         let response = {} as ServerResponse;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '标签id不存在', result: null};
@@ -181,7 +181,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     @body({...TagCatalog.parseToSwaggerSchema(createCatalogSchema)})
     @responses({...TagCatalog.defaultServerResponse})
     static async createCatalog(ctx: Context): Promise<void> {
-        const {header: {refresh_token}, request: {body}} = ctx;
+        const {header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         const {data: userInfo} = await getTokenResult(refresh_token);
         let response = {} as ServerResponse;
         if (!userInfo) {
@@ -210,7 +210,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     @body({...TagCatalog.parseToSwaggerSchema(createCatalogSchema)})
     @responses({...TagCatalog.defaultServerResponse})
     static async editCatalog(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}, request: {body}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}, request: {body}} = ctx;
         let response = {} as ServerResponse;
         const [currentCatalog,] = await TagCatalogStatement.getCategoryById(id);
         const {name} = body;
@@ -239,7 +239,7 @@ export default class TagCatalog extends JoiSchemaToSwaggerSchema {
     })
     @responses({...TagCatalog.defaultServerResponse})
     static async deleteCatalog(ctx: Context): Promise<void> {
-        const {params: {id}, header: {refresh_token}} = ctx;
+        const {params: {id}, header: {'refresh-token': refresh_token}} = ctx;
         let response = {} as ServerResponse;
         if (!id) {
             ctx.body = response = {...response, code: 400, message: '目录id不存在', result: null};

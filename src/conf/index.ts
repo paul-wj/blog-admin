@@ -1,7 +1,7 @@
 import {resolve as r} from 'path';
 import * as cros from 'koa2-cors';
 
-const IS_LOCAL: boolean = true;
+const IS_LOCAL: boolean = false;
 
 export interface IDataBaseConfig {
     database: string;
@@ -17,6 +17,7 @@ export interface IRedisConfig {
 }
 
 export interface IStaticPathConfig {
+    BASE_PATH: string;
     STATIC_PATH: string;
     PRIVATE_KEY: string;
     PUBLIC_KEY: string;
@@ -55,6 +56,7 @@ export const redisConfig: IRedisConfig = {
 };
 
 export const staticPathConfig: IStaticPathConfig = {
+    BASE_PATH: r(__dirname, '../'),
     STATIC_PATH: r(__dirname, '../../static'),
     PRIVATE_KEY: r(__dirname, '../../public/private.key'),
     PUBLIC_KEY: r(__dirname, '../../public/public.key')
@@ -82,7 +84,7 @@ export const crosOptions: cros.Options = {
     //设置请求支持的类型
     allowMethods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
     //请求服务器支持的所有头信息字段
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-requested-with', 'cip', 'refresh_token'],
+    allowHeaders: ['Content-Type', 'authorization', 'Accept', 'x-requested-with', 'cip', 'refresh-token'],
 };
 
 export const jwtConfig: IJwtConfig = {

@@ -18,7 +18,7 @@ export interface ISwaggerSchemaInfo<T = null> {
     items?: ISwaggerSchemaInfo & ISwaggerSchemaInfo<T>;
 }
 
-export type ISwaggerSchema = Record<string, ISwaggerSchemaInfo<{ authorization: string; refresh_token: string; }>>
+export type ISwaggerSchema = Record<string, ISwaggerSchemaInfo<{ authorization: string; 'refresh-token': string; }>>
 
 export const defaultHeaders: ISwaggerSchema = {
     authorization: {type: 'string', required: true, description: '认证信息'},

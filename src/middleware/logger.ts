@@ -17,7 +17,7 @@ export interface LoggerInfo {
 }
 
 export const loggerMiddleware = async (ctx: Context, next: Next): Promise<void> => {
-    const {header: {refresh_token}, request: {method, url, header}} = ctx;
+    const {header: {'refresh-token': refresh_token}, request: {method, url, header}} = ctx;
     const {data: userInfo} = await getTokenResult(refresh_token);
     const {host, origin, cip} = header;
     const loggerData: LoggerInfo = {

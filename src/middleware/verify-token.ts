@@ -83,6 +83,7 @@ const createNewToken = (ctx: Context, data: Partial<UserInfo>, refreshToken: str
 
 export const verifyTokenErrorCallback = async (ctx: Context, next: Next, token: string, refreshToken: string): Promise<void> => {
     const tokenResult = getTokenResult(token);
+    console.log(token, refreshToken, tokenResult);
     const {error, errorStatus: {isError, isExpired}} = tokenResult;
     if (isError) {
         let response: ServerResponse = {} as ServerResponse;
@@ -119,7 +120,7 @@ export const checkTokenMiddleware = async (ctx: Context, next: Next): Promise<vo
         return
     }
     const token: string = header.authorization;
-    const refreshToken: string = header['refresh_token'];
+    const refreshToken: string = header['refresh-token'];
     let response: ServerResponse = {} as ServerResponse;
     if (token && refreshToken) {
         await verifyTokenErrorCallback(ctx, next, token, refreshToken);
