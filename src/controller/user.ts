@@ -100,6 +100,11 @@ export default class User extends JoiSchemaToSwaggerSchema {
         const render = fs.createReadStream(file.path);
         const filePath = nodePath.join(staticPathConfig.BASE_PATH, 'static/upload/', fileName);
         const fileDir = nodePath.join(staticPathConfig.BASE_PATH, 'static/upload/');
+        if (!fs.existsSync(fileDir)) {
+            if (!fs.mkdirSync(fileDir, {recursive: true})) {
+                console.log(`文件创建失败`)
+            }
+        }
         // 创建写入流
         const upStream = fs.createWriteStream(filePath);
         render.pipe(upStream);

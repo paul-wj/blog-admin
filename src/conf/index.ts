@@ -1,7 +1,7 @@
 import {resolve as r} from 'path';
 import * as cros from 'koa2-cors';
 
-const IS_LOCAL: boolean = false;
+const IS_LOCAL: boolean = true;
 
 export interface IDataBaseConfig {
     database: string;
@@ -56,7 +56,7 @@ export const redisConfig: IRedisConfig = {
 };
 
 export const staticPathConfig: IStaticPathConfig = {
-    BASE_PATH: r(__dirname, '../'),
+    BASE_PATH: r(__dirname, '../../'),
     STATIC_PATH: r(__dirname, '../../static'),
     PRIVATE_KEY: r(__dirname, '../../public/private.key'),
     PUBLIC_KEY: r(__dirname, '../../public/public.key')
