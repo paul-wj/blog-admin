@@ -5,6 +5,7 @@
 - 前后台分离式开发（当前为后台仓库）。
 
 * 我的博客地址: [汪小二的博客](https://www.wangjie818.wang/)
+* 接口文档地址: [swagger接口文档](https://www.wangjie818.wang/prod/swagger-html)
 
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)&nbsp;&nbsp;[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
@@ -26,7 +27,7 @@
 
 ### swagger接口文档页面
 
-![](https://user-gold-cdn.xitu.io/2020/4/30/171ca66adfde698a)
+![](https://user-gold-cdn.xitu.io/2020/6/30/17303cdf9abfd314?imageView2/2/w/480/h/480/q/85/interlace/1)
 
 
 ## 项目结构
