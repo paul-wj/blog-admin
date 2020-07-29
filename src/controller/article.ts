@@ -64,6 +64,8 @@ const articleAllListResponse: SuccessResponses<ArticleInfo> = {
                             },
                             content: {type: 'string', example: 'string', description: '文章内容'},
                             userId: {type: 'number', example: 'number', description: '用户id'},
+                            username: {type: 'string', example: 'string', description: '用户名'},
+                            userProfilePicture: {type: 'string', example: 'string', description: '用户头像'},
                             comments: {type: 'number', example: 'number', description: '文章评论数'},
                             createTime: {type: 'string', example: 'string', description: '创建时间'},
                             updateTime: {type: 'string', example: 'string', description: '更新时间'},
@@ -106,6 +108,8 @@ const articlePageListResponse: ServerSuccessResponsePageList<ArticleInfo> = {
                                     },
                                     content: {type: 'string', example: 'string', description: '文章内容'},
                                     userId: {type: 'number', example: 'number', description: '用户id'},
+                                    username: {type: 'string', example: 'string', description: '用户名'},
+                                    userProfilePicture: {type: 'string', example: 'string', description: '用户头像'},
                                     comments: {type: 'number', example: 'number', description: '文章评论数'},
                                     createTime: {type: 'string', example: 'string', description: '创建时间'},
                                     updateTime: {type: 'string', example: 'string', description: '更新时间'},
@@ -138,6 +142,8 @@ const articleDetailResponse: SuccessResponses<ArticleInfo> = {
                         categories: {type: 'array', items: {type: "string", example: 'string'}, description: '文章目录列表'},
                         content: {type: 'string', example: 'string', description: '文章内容'},
                         userId: {type: 'number', example: 'number', description: '用户id'},
+                        username: {type: 'string', example: 'string', description: '用户名'},
+                        userProfilePicture: {type: 'string', example: 'string', description: '用户头像'},
                         comments: {type: 'number', example: 'number', description: '文章评论数'},
                         createTime: {type: 'string', example: 'string', description: '创建时间'},
                         updateTime: {type: 'string', example: 'string', description: '更新时间'},
@@ -534,24 +540,30 @@ export default class Article extends JoiSchemaToSwaggerSchema {
                     const {id} = comment;
                     //回复类型（10：点赞，20：踩,  30: 文字回复）
                     const replyAllList: CommentReplyInfo[] = await ArticleStatement.getArticleCommentReplyListByCommentId(id);
-                    let [likes, dislikes, replyList, isReply, replyToReplyList]: [number, number, CommentReplyInfo[], boolean, CommentReplyInfo[]] = [0, 0, [], false, []];
+                    let [likes, dislikes, replyList, replyToReplyList]: [number, number, CommentReplyInfo[], CommentReplyInfo[]] = [0, 0, [], []];
                     replyAllList.forEach((reply: CommentReplyInfo) => {
-                        //当评论方式为评论回复时
-                        if (reply.replyWay === 10) {
-                            //当前评论类型为文字回复
-                            if (reply.type === 30) {
-                                replyList.push({...reply, isReply, likes: 0, dislikes: 0});
-                            } else {
-                                reply.type === 10 ? likes++ : dislikes++
-                            }
+                        if (reply.type === 30) {
+                            replyList.push({...reply, likes: 0, dislikes: 0});
                         } else {
-                            replyToReplyList.push(reply);
+                            if (reply.replyWay === 10) {
+                                reply.type === 10 ? likes++ : dislikes++
+                            } else {
+                                replyToReplyList.push(Object.assign({}, reply, {likes: 0, dislikes: 0}));
+                            }
                         }
                     });
                     replyList = replyList.map((reply: CommentReplyInfo) => {
-                        const result = {...reply, likes: 0, dislikes: 0};
-                        replyToReplyList.forEach((item: CommentReplyInfo) => item.type !== 30 && item.replyId === reply.id && item.type === 10 ? result.likes++ : result.dislikes++);
-                        return result
+                        let likes = 0, dislikes = 0;
+                        replyToReplyList.forEach((item: CommentReplyInfo) => {
+                            if (item.replyId === reply.id) {
+                                if (item.type === 10) {
+                                    likes++;
+                                } else {
+                                    dislikes++;
+                                }
+                            }
+                        });
+                        return Object.assign({}, reply, {likes, dislikes})
                     });
                     comment.reply = {likes, dislikes, replyList};
                 }
@@ -700,9 +712,10 @@ export default class Article extends JoiSchemaToSwaggerSchema {
             ctx.body = response = {code: 400, message: '回复id不存在', result: null};
             return
         }
+        console.log(id, 123,)
         let queryResult = await ArticleStatement.deleteArticleCommentReplyByReplyId(id);
         if (queryResult && queryResult.insertId !== void 0) {
-            response = {code: 400, message: '成功', result: null};
+            response = {code: 0, message: '成功', result: null};
         }
         ctx.body = response;
     }

@@ -8,6 +8,8 @@ export interface ArticleInfo {
     categories: string | number[];
     content: string;
     userId: number;
+    username: string;
+    userProfilePicture: string;
     comments: number;
     updateTime: string;
     createTime: string

@@ -40,11 +40,36 @@ export default class ArticleStatement {
 
     static async getArticlePageList(params: ArticlePageListRequestBody) {
         const {limit, offset, title} = params;
-        return query<SqlPageListResponse<ArticleInfo>>(`select sql_calc_found_rows  * from ${ARTICLE_TABLE_NAME} where title like '%${title || ''}%' order by createTime desc limit ${limit} offset ${offset};SELECT FOUND_ROWS() as total;`)
+        return query<SqlPageListResponse<ArticleInfo>>(`
+            SELECT SQL_CALC_FOUND_ROWS
+                ARTICLE.*,
+                USER.username,
+                USER.profilePicture userProfilePicture 
+            FROM
+                ${ARTICLE_TABLE_NAME} Article
+                LEFT JOIN user_info USER ON ARTICLE.userId = USER.id
+            WHERE
+                title LIKE '%${title || ''}%'
+            ORDER BY
+                createTime DESC 
+                LIMIT ${limit} OFFSET ${offset};
+            SELECT
+                FOUND_ROWS( ) AS total;
+        `)
     }
 
     static async getArticleById(id: number) {
-        return query<ArticleInfo[]>(`select * from ${ARTICLE_TABLE_NAME} where id=${id}`);
+        return query<ArticleInfo[]>(`
+        SELECT
+            ARTICLE.*,
+            USER.username,
+            USER.profilePicture userProfilePicture 
+        FROM
+            ${ARTICLE_TABLE_NAME} ARTICLE
+            LEFT JOIN user_info USER ON ARTICLE.userId = USER.id
+        WHERE
+            ARTICLE.id=${id}
+        `);
     }
 
     static async getArticlePageListByCategoryId(params: RequestPageBody & { categoryId: number }) {
