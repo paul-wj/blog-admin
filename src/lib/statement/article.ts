@@ -31,7 +31,7 @@ export default class ArticleStatement {
             USER.username userName,
             USER.profilePicture userProfilePicture 
         FROM
-            article_comment ARTICLE
+            ${ARTICLE_COMMENT_TABLE_NAME} ARTICLE
             LEFT JOIN user_info USER ON ARTICLE.userId = USER.id 
         WHERE
             ARTICLE.articleId=${id} order by createTime desc
@@ -46,8 +46,8 @@ export default class ArticleStatement {
                 USER.username,
                 USER.profilePicture userProfilePicture 
             FROM
-                ${ARTICLE_TABLE_NAME} Article
-                LEFT JOIN user_info USER ON ARTICLE.userId = USER.id
+                ${ARTICLE_TABLE_NAME} ARTICLE
+                LEFT JOIN ${USER_TABLE_NAME} USER ON ARTICLE.userId = USER.id
             WHERE
                 title LIKE '%${title || ''}%'
             ORDER BY
@@ -66,7 +66,7 @@ export default class ArticleStatement {
             USER.profilePicture userProfilePicture 
         FROM
             ${ARTICLE_TABLE_NAME} ARTICLE
-            LEFT JOIN user_info USER ON ARTICLE.userId = USER.id
+            LEFT JOIN ${USER_TABLE_NAME} USER ON ARTICLE.userId = USER.id
         WHERE
             ARTICLE.id=${id}
         `);
