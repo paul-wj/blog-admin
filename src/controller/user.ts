@@ -17,6 +17,7 @@ import {registerUserSchema, loginSchema, userListSchema, updateUserSchema} from 
 import UserStatement from '../lib/statement/user';
 import {
     staticPathConfig,
+    STATIC_URL,
 } from '../conf';
 import {
     request,
@@ -108,7 +109,7 @@ export default class User extends JoiSchemaToSwaggerSchema {
         // 创建写入流
         const upStream = fs.createWriteStream(filePath);
         render.pipe(upStream);
-        response.result = `https://www.wangjie818.wang/upload/${fileName}`;
+        response.result = `${STATIC_URL}${fileName}`;
         response.message = '上传成功';
         ctx.body = response;
     }

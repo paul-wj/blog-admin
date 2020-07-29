@@ -68,7 +68,7 @@ export const globalConfig: IConfig = {
     host: 'localhost',
 };
 
-const crosWhiteList = ['http://localhost:3000', 'http://www.wangjie818.wang:3000'];
+const crosWhiteList = ['http://localhost:3000', 'http://www.wangjie818.wang:3000', "http://188.188.188.66:8002"];
 
 export const crosOptions: cros.Options = {
     //允许访问的来源地址
@@ -84,7 +84,7 @@ export const crosOptions: cros.Options = {
     //设置请求支持的类型
     allowMethods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
     //请求服务器支持的所有头信息字段
-    allowHeaders: ['Content-Type', 'authorization', 'Accept', 'x-requested-with', 'cip', 'refresh-token'],
+    allowHeaders: ['Content-Type', 'authorization', 'Accept', 'x-requested-with', 'cip', 'refresh-token', 'timestamp'],
 };
 
 export const jwtConfig: IJwtConfig = {
@@ -113,6 +113,8 @@ export const databaseMap = {
     ABOUT_COMMENT_TABLE_NAME: 'about_comment',
     ABOUT_REPLY_TABLE_NAME: 'about_reply',
 };
+
+export const STATIC_URL = `${IS_LOCAL ? `http://${globalConfig.host}:${globalConfig.port}` : 'https://www.wangjie818.wang'}/upload/`;
 
 
 
