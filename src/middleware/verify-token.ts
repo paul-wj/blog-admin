@@ -125,6 +125,6 @@ export const checkTokenMiddleware = async (ctx: Context, next: Next): Promise<vo
         await verifyTokenErrorCallback(ctx, next, token, refreshToken);
         return
     }
-    response = {code: 403, message: '登录信息已过期', result: null};
+    response = {code: 400, message: '请登录后操作', result: null};
     ctx.body = response;
 };
