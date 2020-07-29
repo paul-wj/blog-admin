@@ -3,6 +3,7 @@
 # dependencies
 /logs
 /node_modules
+/static
 /.idea
 /.pnp
 .pnp.js
