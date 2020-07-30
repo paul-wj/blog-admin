@@ -97,7 +97,7 @@ export default class User extends JoiSchemaToSwaggerSchema {
     static async uploadFile(ctx: Context): Promise<void> {
         let response = {} as ServerResponse<string>;
         const file = ctx.request.files.file;
-        const fileName = file.name;
+        const fileName = `${new Date().getTime()}_${file.name}`;
         const render = fs.createReadStream(file.path);
         const filePath = nodePath.join(staticPathConfig.BASE_PATH, 'static/upload/', fileName);
         const fileDir = nodePath.join(staticPathConfig.BASE_PATH, 'static/upload/');
