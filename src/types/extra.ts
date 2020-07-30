@@ -15,6 +15,8 @@ export interface ExtraAboutCommentReplyInfo {
     commentContent: string;
     userName: string;
     userPic: string;
+    toUserName: string;
+    toUserPic: string;
 }
 
 export interface ExtraAboutCommentInfo {
@@ -76,5 +78,13 @@ export interface ExtraNoticeRequestBody {
     title: string;
     type: number;
     sourceId: number;
+}
+
+export interface ExtraSongInfo {
+    id: number;
+    author: string;
+    name: string;
+    picUrl: string;
+    url: string;
 }
 

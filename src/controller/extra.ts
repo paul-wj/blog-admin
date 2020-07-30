@@ -1,6 +1,7 @@
 import Joi, {ValidationResult} from 'joi';
 import {Context} from "koa";
 import {OkPacket} from 'mysql';
+import axios from 'axios';
 import {JoiSchemaToSwaggerSchema} from '../lib/utils';
 import { formatDate } from "../lib/utils";
 import dayJs from 'dayjs';
@@ -24,7 +25,7 @@ import {
     ExtraAboutCommentRequestBody,
     ExtraAboutCommentReplyRequestBody,
     ExtraStatisticsInfo,
-    ExtraStatisticsTotalInfo, ExtraNoticeInfo, ExtraReadMessageRequestBody, ExtraNoticeRequestBody
+    ExtraStatisticsTotalInfo, ExtraNoticeInfo, ExtraReadMessageRequestBody, ExtraNoticeRequestBody, ExtraSongInfo
 } from "../types/extra";
 import {getTokenResult} from "../middleware/verify-token";
 import { webSocketObj } from "../lib/utils/webSocket";
@@ -36,7 +37,6 @@ import {
 import ArticleStatement from "../lib/statement/article";
 import {ArticleInfo, CommentInfo, CommentReplyStatementInfo} from "../types/article";
 import UserStatement from "../lib/statement/user";
-import {ivory} from "color-name";
 
 const getStatisticsInfo = (list: ArticleInfo[] | CommentInfo[] | CommentReplyStatementInfo[]): ExtraStatisticsTotalInfo => {
     const totalObj: ExtraStatisticsTotalInfo = {
@@ -97,6 +97,9 @@ const extraAboutCommentListResponse: SuccessResponses<ExtraAboutCommentInfo> = {
                                         createTime: {type: 'string', example: 'string', description: '创建时间'},
                                         commentContent: {type: 'string', example: 'string', description: '留言内容'},
                                         userName: {type: 'string', example: 'string', description: '用户名'},
+                                        userPic: {type: 'string', example: 'string', description: '用户头像'},
+                                        toUserName: {type: 'string', example: 'string', description: '接收者用户名'},
+                                        toUserPic: {type: 'string', example: 'string', description: '接收者用头像'},
                                     }
                                 }
                             }
@@ -163,6 +166,35 @@ const extraNoticeInfoResponse: SuccessResponses<ExtraNoticeInfo> = {
         }
     }
 };
+
+const extraSongListResponse: SuccessResponses<ExtraSongInfo> ={
+    200: {
+        description: 'success',
+        schema: {
+            type: 'object',
+            properties: {
+                code: {type: 'number', example: 0, description: '状态码'},
+                message: {type: 'string', example: '成功', description: '提示信息'},
+                result: {
+                    type: "array",
+                    items: {
+                        type: 'object',
+                        properties: {
+                            id: {type: 'number', example: 'number', description: '歌曲id'},
+                            author: {type: 'string', example: 'string', description: '歌曲作者'},
+                            name: {type: 'string', example: 'string', description: '歌曲名称'},
+                            picUrl: {type: 'string', example: 'string', description: '歌曲图片'},
+                            url: {type: 'string', example: 'string', description: '歌曲外链'},
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+const getFinallyAuthor = (authorList: any) => authorList.reduce((startValue: any, currentValue: any, currentIndex: any) => `${startValue}${currentValue.name}${currentIndex !== authorList.length -1 ? '/' : ''}`, '');
 
 @tagsAll(["系统附加信息API接口"])
 export default class Extra extends JoiSchemaToSwaggerSchema {
@@ -239,6 +271,8 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
         }
         ctx.body = response;
     }
+
+
 
     @request('get', '/extra/statistics/article')
     @summary('获取文章数量数据统计')
@@ -411,5 +445,64 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
                 }
             }
         }
+    }
+
+    @request('get', '/extra/song')
+    @summary('获取个人网易云歌曲列表')
+    @header(Extra.defaultHeaders)
+    @responses({...Extra.defaultServerResponse, ...extraSongListResponse})
+    static async getSongList(ctx: Context): Promise<void> {
+        let response = {} as ServerResponse<ExtraSongInfo[]>;
+        const songUrl = 'https://api.imjad.cn/cloudmusic/?type=playlist&id=2972264118';
+        const songResult = await axios.get(songUrl).then(res => res).catch(err => err);
+        const res = songResult ? songResult.data : null;
+        let songIdList: number[] = [];
+        let songList = [];
+        if (res && res.code === 200) {
+            const {playlist} = res;
+            if (playlist && playlist.tracks) {
+                songIdList = playlist.trackIds.map((item: any) => item.id);
+                songList = playlist.tracks.map((track: any) => {
+                    const {id, name, ar, al} = track;
+                    delete songIdList[songIdList.indexOf(id)];
+                    return {
+                        id,
+                        author: getFinallyAuthor(ar),
+                        name: name,
+                        picUrl: al.picUrl,
+                        url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
+                    }
+                });
+                songIdList = songIdList.filter(song => !!song);
+                if (songIdList.length) {
+                    const processArray = async (idList: number[]) => {
+                        for (let id of idList) {
+                            const result = await axios.get(`http://music.163.com/api/song/detail/?id=[${id}]&ids=[${id}]&csrf_token=`).then(res => res).catch(err => err);
+                            const res = result ? result.data : null;
+                            if (res && res.code === 200) {
+                                const {songs: [song]} = res;
+                                if (song) {
+                                    const {name, id, artists, album: {picUrl}} = song;
+                                    songList.push({
+                                        id,
+                                        author: getFinallyAuthor(artists),
+                                        name,
+                                        picUrl: picUrl.indexOf('https') > -1 ? picUrl : `https${picUrl.substring(4, picUrl.length)}`,
+                                        url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
+                                    })
+                                }
+                            }
+                        }
+                    };
+                    await processArray(songIdList);
+                }
+            }
+        }
+        if (songList.length) {
+            response = {code: 0, message: '成功', result: songList};
+        } else {
+            response = {code: 404, message: '资源不存在', result: null};
+        }
+        ctx.body = response;
     }
 }

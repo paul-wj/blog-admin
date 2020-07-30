@@ -21,20 +21,23 @@ export default class ExtraStatement {
 
     static async getAboutCommentReplyList(commentId: number) {
         const sqlStatement = `
-    SELECT
-		COMMENT_REPLY.*,
-		USER.username userName,
-		USER.profilePicture userPic 
-	FROM
-		(
-		SELECT
-			REPLY.*,
-			COMMENT.content commentContent 
-		FROM
-			( SELECT * FROM about_reply WHERE commentId = ${commentId} ) REPLY
-			LEFT JOIN about_comment COMMENT ON REPLY.commentId = COMMENT.id 
-		) COMMENT_REPLY
-		LEFT JOIN user_info USER ON COMMENT_REPLY.userId = USER.id;
+        SELECT
+            COMMENT_REPLY.*,
+            USER.username userName,
+            USER.profilePicture userPic,
+            TO_USER.username toUserName,
+            TO_USER.profilePicture toUserPic
+        FROM
+            (
+                SELECT
+                    REPLY.*,
+                    COMMENT.content commentContent 
+                FROM
+                    ( SELECT * FROM about_reply WHERE commentId = ${commentId} ) REPLY
+                    LEFT JOIN about_comment COMMENT ON REPLY.commentId = COMMENT.id 
+            ) COMMENT_REPLY
+            LEFT JOIN user_info USER ON COMMENT_REPLY.userId = USER.id
+            LEFT JOIN user_info TO_USER ON COMMENT_REPLY.sendId	= TO_USER.id;
      `;
         return query<ExtraAboutCommentReplyInfo[]>(sqlStatement);
     }
@@ -94,7 +97,9 @@ export default class ExtraStatement {
 			WHERE
 			STATUS IS NULL 
 	) NOTICE_CONTENT
-	LEFT JOIN user_info USER ON NOTICE_CONTENT.sendId = USER.id
+	       LEFT JOIN user_info USER ON NOTICE_CONTENT.sendId = USER.id
+	ORDER BY
+        createDate DESC        
 	`;
         return query<ExtraNoticeInfo[]>(sqlStatement);
     }
