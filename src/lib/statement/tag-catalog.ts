@@ -27,11 +27,11 @@ export default class TagCatalogStatement {
     }
 
     static async getTagAllList() {
-        return query<TagInfo[]>(`select * from ${TAG_TABLE_NAME}`)
+        return query<TagInfo[]>(`select * from ${TAG_TABLE_NAME} order by createTime desc`)
     }
 
     static async getCategoryAllList() {
-        return query<CatalogInfo[]>(`select * from ${CATEGORY_TABLE_NAME}`)
+        return query<CatalogInfo[]>(`select * from ${CATEGORY_TABLE_NAME} order by createTime desc`)
     }
 
     static async createCategory(data: CatalogRequestBody & { userId: number }) {
