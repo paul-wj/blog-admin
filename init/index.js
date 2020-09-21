@@ -1,6 +1,6 @@
 const fs = require('fs');
 const getSqlContentMap = require('./utils/get-sql-content-map');
-const {query} = require('../server/utils/async-db');
+const query = require('../dist/lib/utils/query').default;
 
 // 打印脚本执行日志
 const eventLog = function( err , sqlFile, index ) {
