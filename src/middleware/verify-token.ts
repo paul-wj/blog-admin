@@ -114,7 +114,7 @@ export const verifyTokenErrorCallback = async (ctx: Context, next: Next, token: 
 export const checkTokenMiddleware = async (ctx: Context, next: Next): Promise<void> => {
     const {header, method, url} = ctx;
     //get和options请求
-    if (['OPTIONS', 'GET'].includes(method) || jwtUnlessPathList.some((unlessPath: IUnlessPath) => url === unlessPath.url)) {
+    if (['OPTIONS', 'GET'].includes(method) || jwtUnlessPathList.some((unlessPath: IUnlessPath) => url === unlessPath.url) || url.startsWith('/monitor')) {
         await next();
         return
     }
