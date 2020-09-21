@@ -68,7 +68,7 @@ export const globalConfig: IConfig = {
     host: 'localhost',
 };
 
-const crosWhiteList = ['http://localhost:3000', 'http://www.wangjie818.wang:3000', "http://188.188.188.66:8002"];
+const crosWhiteList = ['http://localhost:3000', 'http://www.wangjie818.wang:3000', "http://188.188.188.66:8001"];
 
 export const crosOptions: cros.Options = {
     //允许访问的来源地址
@@ -112,6 +112,10 @@ export const databaseMap = {
     MESSAGE_USER: 'message_user',
     ABOUT_COMMENT_TABLE_NAME: 'about_comment',
     ABOUT_REPLY_TABLE_NAME: 'about_reply',
+    PERFORMANCE: 'performance',
+    PERFORMANCE_INTERVAL: 'performance_interval',
+    PERFORMANCE_EQUIPMENT: 'performance_equipment',
+    PERFORMANCE_RESOURCE: 'performance_resource'
 };
 
 export const STATIC_URL = `${IS_LOCAL ? `http://${globalConfig.host}:${globalConfig.port}` : 'https://www.wangjie818.wang'}/upload/`;
