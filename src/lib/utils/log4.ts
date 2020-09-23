@@ -17,6 +17,7 @@ const formatRequestLog = (request: Request, logTime: number): string => {
     const {method, originalUrl, header: {cip: ip}} = request;
     const isGet = method === 'GET';
     return `
+request user-agent: ${request.header['user-agent']}     
 request method: ${method} 
 request originalUrl: ${originalUrl}
 request client ip: ${ip}
@@ -32,7 +33,8 @@ ${formatRequestLog(ctx.request, logTime)}
 error name: ${error.name}
 error message: ${error.message}
 error stack: ${error.stack}
-*************** error log end ***************`;
+*************** error log end ***************
+`;
 };
 
 // 格式化响应日志
@@ -42,7 +44,8 @@ const formatResponseLog = (ctx: Context, logTime: number): string => {
 response status: ${ctx.status}
 response body: 
 ${JSON.stringify(ctx.body)}
-*************** response log end ***************`;
+*************** response log end ***************
+`;
 };
 
 // 格式化默认日志
