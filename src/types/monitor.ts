@@ -72,3 +72,12 @@ export interface WebPerformanceResourceInfo {
     equipmentId: number;
     createTime: string;
 }
+
+export interface WebPageErrorRequestParams {
+    href: string;
+    message: string;
+    url: string;
+    lineNum: number;
+    columnNum: number;
+    error: string;
+}
