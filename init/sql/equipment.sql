@@ -1,4 +1,4 @@
-CREATE TABLE  IF NOT EXISTS `performance_equipment` (
+CREATE TABLE  IF NOT EXISTS `equipment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` longtext DEFAULT NULL COMMENT '页面Url',
   `userAgent` longtext DEFAULT NULL COMMENT '设备信息',

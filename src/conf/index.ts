@@ -112,10 +112,12 @@ export const databaseMap = {
     MESSAGE_USER: 'message_user',
     ABOUT_COMMENT_TABLE_NAME: 'about_comment',
     ABOUT_REPLY_TABLE_NAME: 'about_reply',
+    EQUIPMENT: 'equipment',
     PERFORMANCE: 'performance',
     PERFORMANCE_INTERVAL: 'performance_interval',
-    PERFORMANCE_EQUIPMENT: 'performance_equipment',
-    PERFORMANCE_RESOURCE: 'performance_resource'
+    PERFORMANCE_RESOURCE: 'performance_resource',
+    PAGE_ERROR: 'page_error',
+    PAGE_ERROR_RESOURCE: 'page_error_resource'
 };
 
 export const STATIC_URL = `${IS_LOCAL ? `http://${globalConfig.host}:${globalConfig.port}` : 'https://www.wangjie818.wang'}/upload/`;
