@@ -1,7 +1,12 @@
 import {databaseMap, DatabaseMap} from "../../conf";
 import {query} from '../utils';
 import {OkPacket} from "mysql";
-import {WebPerformanceRequestParams, WebPerformanceResourceParams, WebPageErrorRequestParams} from "../../types/monitor";
+import {
+    WebPerformanceRequestParams,
+    WebPerformanceResourceParams,
+    WebPageErrorRequestParams,
+    WebPerformanceResponse
+} from "../../types/monitor";
 
 const {PERFORMANCE, PERFORMANCE_INTERVAL, EQUIPMENT, PERFORMANCE_RESOURCE, PAGE_ERROR, PAGE_ERROR_RESOURCE} = (databaseMap as DatabaseMap);
 
@@ -35,5 +40,38 @@ export default class Monitor {
     static async createWebPageResourceError(userId: number, equipmentId: number, {href, src}: {href: string, src: string}) {
         const sqlStatement = `insert into ${PAGE_ERROR_RESOURCE} (userId, equipmentId, href, src) values (?, ?, ?, ?)`;
         return query<OkPacket>(sqlStatement, [userId, equipmentId, href, src]);
+    }
+
+    static async getWebPagePerformanceData({startTime, endTime}: {startTime: string; endTime: string;}) {
+        const sqlStatement = `
+        SELECT
+            PERFORMANCE.*,
+            EQUIPMENT.url,
+            EQUIPMENT.ip,
+            EQUIPMENT.userAgent 
+        FROM
+            (
+            SELECT
+                PERFORMANCE_MAIN.*,
+                PERFORMANCE_INTERVAL.dns,
+                PERFORMANCE_INTERVAL.tcp,
+                PERFORMANCE_INTERVAL.ttfb,
+                PERFORMANCE_INTERVAL.trans,
+                PERFORMANCE_INTERVAL.dom,
+                PERFORMANCE_INTERVAL.res,
+                PERFORMANCE_INTERVAL.sslTime 
+            FROM
+                ${PERFORMANCE} PERFORMANCE_MAIN
+                LEFT JOIN ${PERFORMANCE_INTERVAL} PERFORMANCE_INTERVAL ON PERFORMANCE_MAIN.intervalId = PERFORMANCE_INTERVAL.id 
+            ) PERFORMANCE
+            LEFT JOIN ${EQUIPMENT} EQUIPMENT ON PERFORMANCE.equipmentId = EQUIPMENT.equipmentId 
+            ${startTime && startTime ?
+            `WHERE
+            DATE_FORMAT( PERFORMANCE.createTime, '%Y/%m/%d %H:%i:%s' ) >= DATE_FORMAT( '${startTime}', '%Y/%m/%d %H:%i:%s' ) 
+            AND DATE_FORMAT( PERFORMANCE.createTime, '%Y/%m/%d %H:%i:%s' ) <= DATE_FORMAT( '${endTime}', '%Y/%m/%d %H:%i:%s' )`
+            : ''
+            };
+        `;
+        return query<WebPerformanceResponse[]>(sqlStatement)
     }
 }

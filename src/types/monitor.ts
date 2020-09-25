@@ -18,6 +18,28 @@ export interface WebPerformanceRequestParams {
     ip: string;
 }
 
+export interface WebPerformanceResponse {
+    fpt: number;
+    tti: number;
+    ready: number;
+    loadTime: number;
+    firstbyte: number;
+    compressionRatio: number;
+    type: string;
+    createTime: string;
+    id: number;
+    dns: number;
+    tcp: number;
+    ttfb: number;
+    trans: number;
+    dom: number;
+    res: number;
+    sslTime: number;
+    url: string;
+    userAgent: string;
+    ip: string;
+}
+
 export interface WebPerformanceInfo {
     fpt: number;
     tti: number;
