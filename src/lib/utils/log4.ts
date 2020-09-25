@@ -27,8 +27,7 @@ response time: ${logTime}`;
 
 // 格式化错误日志
 const formatErrorLog = (ctx: Context, error: Error, logTime: number): string => {
-    return `
-*************** error log start ***************
+    return `*************** error log start ***************
 ${formatRequestLog(ctx.request, logTime)}
 error name: ${error.name}
 error message: ${error.message}
@@ -59,6 +58,7 @@ default detail: ${JSON.stringify(info)}
 // 错误日志上传触发方法
 export const logErrorHandle = (ctx: Context, error: Error, logTime: number): void => {
     if (ctx && error) {
+        console.log(error);
         errorLogger.error(formatErrorLog(ctx, error, logTime));
     }
 };

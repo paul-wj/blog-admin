@@ -39,8 +39,8 @@ export const loggerMiddleware = async (ctx: Context, next: Next): Promise<void> 
     const start = new Date().getTime();
     let ms = new Date().getTime() - start;
     logUtil.logRequestHandle(ctx, 0);
-    await next();
     try {
+        await next();
         // 开始进入到下一个中间件
         if (ctx.status === 404) {
             ctx.throw(404);
