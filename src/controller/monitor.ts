@@ -176,7 +176,7 @@ export default class Monitor extends JoiSchemaToSwaggerSchema {
         }
         const performanceList: WebPerformanceResponse[] = await MonitorStatement.getWebPagePerformanceData(requestParams);
         if (performanceList && performanceList.length) {
-            response = {code: 200, message: '成功', result: performanceList};
+            response = {code: 0, message: '成功', result: performanceList};
         } else {
             response = {code: 404, message: '资源不存在', result: null};
         }
