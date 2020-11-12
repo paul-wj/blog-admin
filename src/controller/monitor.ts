@@ -1,11 +1,4 @@
-import {
-    request,
-    summary,
-    body,
-    tagsAll,
-    responses,
-    query
-} from 'koa-swagger-decorator/dist';
+import {request, summary, body, tagsAll, responses, query} from 'koa-swagger-decorator/dist';
 import {Context} from "koa";
 import {OkPacket} from "mysql";
 import {JoiSchemaToSwaggerSchema} from "../lib/utils";

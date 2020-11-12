@@ -325,11 +325,8 @@ export default class Article extends JoiSchemaToSwaggerSchema {
         if (queryResult && queryResult.length) {
             const [articleInfo] = queryResult;
             await formatArticleInfo(articleInfo);
-            response = {
-                code: 0,
-                message: '成功',
-                result: articleInfo
-            };
+            response = {code: 0, message: '成功', result: articleInfo};
+            await ArticleStatement.updateArticleViewCountById(id, (articleInfo.viewCount || 0) + 1)
         } else {
             response = {...response, code: 404, message: '资源不存在', result: null};
         }

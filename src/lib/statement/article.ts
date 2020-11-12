@@ -20,6 +20,7 @@ import {OkPacket} from "mysql";
 const {ARTICLE_TABLE_NAME, ARTICLE_COMMENT_TABLE_NAME, USER_TABLE_NAME, ARTICLE_REPLY_TABLE_NAME} = (databaseMap as DatabaseMap);
 
 export default class ArticleStatement {
+
     static async getArticleAllList() {
         return query<ArticleInfo[]>(`select * from ${ARTICLE_TABLE_NAME} order by createTime desc`);
     }
@@ -70,6 +71,10 @@ export default class ArticleStatement {
         WHERE
             ARTICLE.id=${id}
         `);
+    }
+
+    static async updateArticleViewCountById(id: number, viewCount: number) {
+        return query(`update ${ARTICLE_TABLE_NAME} set viewCount='${viewCount}' where id = ${id}`)
     }
 
     static async getArticlePageListByCategoryId(params: RequestPageBody & { categoryId: number }) {
