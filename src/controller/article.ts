@@ -116,7 +116,7 @@ const articlePageListResponse: ServerSuccessResponsePageList<ArticleInfo> = {
                                 }
                             }
                         },
-                        total: {type: 'number', example: 'number', description: '用户id'},
+                        total: {type: 'number', example: 'number', description: '总数'},
                     }
                 }
             }

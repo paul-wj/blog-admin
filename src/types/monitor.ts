@@ -103,3 +103,16 @@ export interface WebPageErrorRequestParams {
     columnNum: number;
     error: string;
 }
+
+export interface WebPageErrorResponse {
+    columnNum: number;
+    createTime: string;
+    equipmentId: number;
+    error: string;
+    href: string;
+    id: number;
+    lineNum: number;
+    message: string;
+    url: string;
+    userId: number;
+}

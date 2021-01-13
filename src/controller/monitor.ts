@@ -3,10 +3,10 @@ import {Context} from "koa";
 import {OkPacket} from "mysql";
 import {JoiSchemaToSwaggerSchema} from "../lib/utils";
 import MonitorStatement from "../lib/statement/monitor";
-import {ServerResponse, SuccessResponses} from "../types/response";
+import {PageListResponse, ServerResponse, ServerSuccessResponsePageList, SuccessResponses} from "../types/response";
 import {createMonitorWebPerformanceSchema} from "../lib/schemas/monitor";
 import {getTokenResult} from "../middleware/verify-token";
-import {WebPerformanceResponse} from "../types/monitor";
+import {WebPageErrorResponse, WebPerformanceResponse} from "../types/monitor";
 import {formatDate} from "../lib/utils";
 
 const webPerformanceListResponse: SuccessResponses<WebPerformanceResponse> = {
@@ -48,6 +48,44 @@ const webPerformanceListResponse: SuccessResponses<WebPerformanceResponse> = {
         }
     }
 };
+
+const webPageErrorList: ServerSuccessResponsePageList<WebPageErrorResponse> = {
+    200: {
+        description: 'success',
+        schema: {
+            type: 'object',
+            properties: {
+                code: {type: 'number', example: 0, description: '状态码'},
+                message: {type: 'string', example: '成功', description: '提示信息'},
+                result: {
+                    type: 'object',
+                    properties: {
+                        items: {
+                            type: "array",
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    id: {type: 'number', example: 'number', description: 'id'},
+                                    equipmentId: {type: 'string', example: 'string', description: '设备id'},
+                                    error: {type: 'string', example: 'number', description: '错误Error对象'},
+                                    href: {type: 'string', example: 'number', description: '报错页面地址'},
+                                    columnNum: {type: 'number', example: 'string', description: '报错列号'},
+                                    lineNum: {type: 'number', example: 'string', description: '报错行号'},
+                                    message: {type: 'string', example: 'number', description: '错误描述'},
+                                    url: {type: 'string', example: 'string', description: '报错文件url'},
+                                    userId: {type: 'number', example: 'string', description: '用户id'},
+                                    createTime: {type: 'string', example: 'string', description: '创建时间'},
+                                }
+                            }
+                        },
+                        total: {type: 'number', example: 'number', description: '总数'},
+                    }
+                }
+            }
+        }
+    }
+};
+
 
 @tagsAll(["性能监控API接口"])
 export default class Monitor extends JoiSchemaToSwaggerSchema {
@@ -170,6 +208,30 @@ export default class Monitor extends JoiSchemaToSwaggerSchema {
         const performanceList: WebPerformanceResponse[] = await MonitorStatement.getWebPagePerformanceData(requestParams);
         if (performanceList && performanceList.length) {
             response = {code: 0, message: '成功', result: performanceList};
+        } else {
+            response = {code: 404, message: '资源不存在', result: null};
+        }
+        ctx.body = response;
+    }
+
+
+    @request('get', '/monitor/web/error')
+    @summary('获取页面错误信息分页列表')
+    @query({
+        startTime: {type: 'string', required: false, description: '开始时间'},
+        endTime: {type: 'string', required: false, description: '结束时间'},
+    })
+    @responses({...Monitor.defaultServerResponse, ...webPerformanceListResponse})
+    static async getMonitorWebErrorData(ctx: Context): Promise<void> {
+        const {query: {startTime, endTime, limit, offset}} = ctx;
+        let response = {} as ServerResponse<PageListResponse<WebPageErrorResponse>>;
+        let requestParams = {startTime: '', endTime: '', limit, offset};
+        if (startTime && endTime) {
+            requestParams = {startTime: formatDate(startTime, 'YYYY/MM/DD HH:mm:ss'), endTime: formatDate(endTime, 'YYYY/MM/DD HH:mm:ss'), limit, offset}
+        }
+        const [errorList, [{total}]] = await MonitorStatement.getWebPageErrorData(requestParams);
+        if (errorList && errorList.length) {
+            response = {code: 0, message: '成功', result: {items: errorList, total}};
         } else {
             response = {code: 404, message: '资源不存在', result: null};
         }

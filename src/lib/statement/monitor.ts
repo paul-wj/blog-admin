@@ -5,8 +5,10 @@ import {
     WebPerformanceRequestParams,
     WebPerformanceResourceParams,
     WebPageErrorRequestParams,
-    WebPerformanceResponse
+    WebPerformanceResponse,
+    WebPageErrorResponse
 } from "../../types/monitor";
+import {SqlPageListResponse} from "../../types/response";
 
 const {PERFORMANCE, PERFORMANCE_INTERVAL, EQUIPMENT, PERFORMANCE_RESOURCE, PAGE_ERROR, PAGE_ERROR_RESOURCE} = (databaseMap as DatabaseMap);
 
@@ -73,5 +75,22 @@ export default class Monitor {
             };
         `;
         return query<WebPerformanceResponse[]>(sqlStatement)
+    }
+
+    static async getWebPageErrorData({limit, offset, startTime, endTime}: {limit: number, offset: number, startTime: string, endTime: string}) {
+        return query<SqlPageListResponse<WebPageErrorResponse>>(`
+        SELECT SQL_CALC_FOUND_ROWS
+	        * 
+        FROM
+            ${PAGE_ERROR} 
+        WHERE
+            DATE_FORMAT(createTime, '%Y/%m/%d %H:%i:%s' ) >= DATE_FORMAT('${startTime}', '%Y/%m/%d %H:%i:%s' ) 
+            AND DATE_FORMAT(createTime, '%Y/%m/%d %H:%i:%s' ) <= DATE_FORMAT('${endTime}', '%Y/%m/%d %H:%i:%s' ) 
+        ORDER BY
+            createTime DESC 
+            LIMIT ${limit} OFFSET ${offset};
+        SELECT
+            FOUND_ROWS( ) AS total;
+    `)
     }
 }
