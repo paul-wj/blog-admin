@@ -453,7 +453,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @responses({...Extra.defaultServerResponse, ...extraSongListResponse})
     static async getSongList(ctx: Context): Promise<void> {
         let response = {} as ServerResponse<ExtraSongInfo[]>;
-        const songUrl = 'https://api.imjad.cn/cloudmusic/?type=playlist&id=2972264118';
+        const songUrl = 'http://localhost:3303/playlist/detail?id=2972264118';
         const songResult = await axios.get(songUrl).then(res => res).catch(err => err);
         const res = songResult ? songResult.data : null;
         let songIdList: number[] = [];
@@ -462,39 +462,22 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
             const {playlist} = res;
             if (playlist && playlist.tracks) {
                 songIdList = playlist.trackIds.map((item: any) => item.id);
-                songList = playlist.tracks.map((track: any) => {
-                    const {id, name, ar, al} = track;
-                    delete songIdList[songIdList.indexOf(id)];
-                    return {
-                        id,
-                        author: getFinallyAuthor(ar),
-                        name: name,
-                        picUrl: al.picUrl,
-                        url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
-                    }
-                });
-                songIdList = songIdList.filter(song => !!song);
-                if (songIdList.length) {
-                    const processArray = async (idList: number[]) => {
-                        for (let id of idList) {
-                            const result = await axios.get(`http://music.163.com/api/song/detail/?id=[${id}]&ids=[${id}]&csrf_token=`).then(res => res).catch(err => err);
-                            const res = result ? result.data : null;
-                            if (res && res.code === 200) {
-                                const {songs: [song]} = res;
-                                if (song) {
-                                    const {name, id, artists, album: {picUrl}} = song;
-                                    songList.push({
-                                        id,
-                                        author: getFinallyAuthor(artists),
-                                        name,
-                                        picUrl: picUrl.indexOf('https') > -1 ? picUrl : `https${picUrl.substring(4, picUrl.length)}`,
-                                        url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
-                                    })
-                                }
+                const list = await axios.get(`http://localhost:3303/song/detail?ids=${songIdList.toString()}`);
+                if (list.data) {
+                    const { songs } = list.data;
+                    if (songs && songs.length) {
+                        songList = songs.map((track: any) => {
+                            const {id, name, ar, al} = track;
+                            delete songIdList[songIdList.indexOf(id)];
+                            return {
+                                id,
+                                author: getFinallyAuthor(ar),
+                                name: name,
+                                picUrl: al.picUrl,
+                                url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`
                             }
-                        }
-                    };
-                    await processArray(songIdList);
+                        });
+                    }
                 }
             }
         }
