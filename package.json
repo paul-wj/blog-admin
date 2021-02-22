@@ -29,7 +29,7 @@
     "koa2-cors": "^2.0.6",
     "log4js": "^6.3.0",
     "mysql": "^2.18.1",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.4.0"
   },
   "devDependencies": {
     "@types/joi": "^14.3.4",
