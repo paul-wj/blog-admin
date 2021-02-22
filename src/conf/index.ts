@@ -71,19 +71,19 @@ export const globalConfig: IConfig = {
 const crosWhiteList = ['http://localhost:3000', 'http://www.wangjie818.wang:3000', "http://188.188.188.66:8001"];
 
 export const crosOptions: cros.Options = {
-    //允许访问的来源地址
+    // 允许访问的来源地址
     origin: ctx => {
         const {request, origin: ctxOrigin} = ctx;
         const {origin} = request.header;
         return origin !== ctxOrigin && (IS_LOCAL ? true : crosWhiteList.includes(origin)) ? origin : false;
     },
-    //设置预检请求有效期（单位: s）
+    // 设置预检请求有效期（单位: s）
     maxAge: 60*60,
-    //是否允许传输cookie（如果为true需要保证origin为*）
+    // 是否允许传输cookie（如果为true需要保证origin为*）
     credentials: false,
-    //设置请求支持的类型
+    // 设置请求支持的类型
     allowMethods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
-    //请求服务器支持的所有头信息字段
+    // 请求服务器支持的所有头信息字段
     allowHeaders: ['Content-Type', 'authorization', 'Accept', 'x-requested-with', 'cip', 'refresh-token', 'timestamp'],
 };
 
