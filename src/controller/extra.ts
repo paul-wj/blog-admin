@@ -453,7 +453,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
     @responses({...Extra.defaultServerResponse, ...extraSongListResponse})
     static async getSongList(ctx: Context): Promise<void> {
         let response = {} as ServerResponse<ExtraSongInfo[]>;
-        const songUrl = 'http://localhost:3303/playlist/detail?id=2972264118';
+        const songUrl = 'http://118.24.181.75:3303/playlist/detail?id=2972264118';
         const songResult = await axios.get(songUrl).then(res => res).catch(err => err);
         const res = songResult ? songResult.data : null;
         let songIdList: number[] = [];
@@ -462,7 +462,7 @@ export default class Extra extends JoiSchemaToSwaggerSchema {
             const {playlist} = res;
             if (playlist && playlist.tracks) {
                 songIdList = playlist.trackIds.map((item: any) => item.id);
-                const list = await axios.get(`http://localhost:3303/song/detail?ids=${songIdList.toString()}`);
+                const list = await axios.get(`http://118.24.181.75:3303/song/detail?ids=${songIdList.toString()}`);
                 if (list.data) {
                     const { songs } = list.data;
                     if (songs && songs.length) {

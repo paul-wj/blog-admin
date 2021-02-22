@@ -45,7 +45,7 @@ export type DatabaseMap = Record<keyof typeof databaseMap, string>;
 export const dataBaseConfig: IDataBaseConfig = {
     database: 'own_blog',
     user: 'root',
-    password: IS_LOCAL ? 'www5576081' : 'ufrVTJd2ONn#U%t&',
+    password: IS_LOCAL ? 'ufrVTJd2ONn#U%t&' : 'ufrVTJd2ONn#U%t&',
     port: 3306,
     host: 'localhost',
 };
